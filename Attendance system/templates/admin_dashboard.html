@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="amber">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AttendIQ AI - Admin Control Center</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================= SYSTEM THEME VARIABLES ================= */
+    :root {
+      /* Theme Defaults: Amber Sunset */
+      --bg-main: #0c0a06;
+      --bg-sidebar: #070503;
+      --bg-card: rgba(20, 16, 10, 0.95);
+      --bg-card-border: #3a2810;
+      --bg-card-hover: rgba(35, 26, 15, 0.98);
+      --text-main: #f3f4f6;
+      --text-muted: #a1a1aa;
+      --text-gold: #f59e0b;
+      --accent-gold: #f59e0b;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-blue: #38bdf8;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-yellow: #eab308;
+      --font-primary: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="midnight"] {
+      --bg-main: #090d16;
+      --bg-sidebar: #05080e;
+      --bg-card: rgba(15, 23, 42, 0.95);
+      --bg-card-border: #1e293b;
+      --bg-card-hover: rgba(30, 41, 59, 0.98);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-gold: #38bdf8;
+      --accent-gold: #38bdf8;
+      --accent-gold-glow: rgba(56, 189, 248, 0.25);
+    }
+
+    [data-theme="light"] {
+      --bg-main: #f8fafc;
+      --bg-sidebar: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-border: #e2e8f0;
+      --bg-card-hover: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-gold: #d97706;
+      --accent-gold: #d97706;
+      --accent-gold-glow: rgba(217, 119, 6, 0.15);
+    }
+
+    [data-theme="emerald"] {
+      --bg-main: #06140e;
+      --bg-sidebar: #030a07;
+      --bg-card: rgba(12, 33, 23, 0.95);
+      --bg-card-border: #14452f;
+      --bg-card-hover: rgba(19, 51, 36, 0.98);
+      --text-main: #ecfdf5;
+      --text-muted: #6ee7b7;
+      --text-gold: #10b981;
+      --accent-gold: #10b981;
+      --accent-gold-glow: rgba(16, 185, 129, 0.25);
+    }
+
+    [data-theme="purple"] {
+      --bg-main: #0f0919;
+      --bg-sidebar: #08040d;
+      --bg-card: rgba(26, 16, 43, 0.95);
+      --bg-card-border: #3b2260;
+      --bg-card-hover: rgba(43, 26, 70, 0.98);
+      --text-main: #faf5ff;
+      --text-muted: #c084fc;
+      --text-gold: #c084fc;
+      --accent-gold: #c084fc;
+      --accent-gold-glow: rgba(192, 132, 252, 0.25);
+    }
+
+    /* Reset & Core Styling */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-primary);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-size: 14px;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 85% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 45%),
+      background-attachment: fixed;
+    }
+
+    /* Global Custom Scrollbar */
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(7, 10, 17, 0.8);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.4);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-gold);
+    }
+
+    /* ================= SIDEBAR ================= */
+    .sidebar {
+      width: 250px;
+      background: rgba(18, 14, 8, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid var(--bg-card-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 14px;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(245, 158, 11, 0.35);
+      border-radius: 10px;
+    }
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-gold);
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 10px 24px 10px;
+      border-bottom: 1px solid var(--bg-card-border);
+      margin-bottom: 20px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent-gold), #d97706);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 0 15px var(--accent-gold-glow);
+    }
+
+    .brand-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid var(--accent-gold);
+      box-shadow: 0 0 12px var(--accent-gold-glow);
+    }
+
+    .nav-icon {
+      font-size: 16px;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      color: #ef4444;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13.5px;
+      border-radius: 10px;
+      transition: background 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.12);
+    }
+
+    /* ================= MAIN CONTENT WRAPPER ================= */
+    .main-wrapper {
+      margin-left: 250px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ================= HEADER BAR ================= */
+    .top-header {
+      height: 70px;
+      border-bottom: 1px solid var(--bg-card-border);
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-main);
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .welcome-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .welcome-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent-gold);
+    }
+
+    .role-badge {
+      font-size: 11px;
+      background: #0284c7;
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Theme Switcher Popup Menu */
+    .theme-dropdown-container {
+      position: relative;
+    }
+
+    .theme-btn {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--accent-gold);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover {
+      background: rgba(245, 158, 11, 0.2);
+    }
+
+    .theme-menu {
+      position: absolute;
+      top: 45px;
+      right: 0;
+      background: #14100a;
+      border: 1px solid #f59e0b;
+      border-radius: 14px;
+      width: 190px;
+      padding: 8px;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      z-index: 200;
+    }
+
+    .theme-menu.show {
+      display: flex;
+    }
+
+    .theme-opt {
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #d1d5db;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .theme-opt:hover {
+      background: rgba(245, 158, 11, 0.2);
+      color: #ffffff;
+    }
+
+    .bell-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .pdf-btn {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid #ef4444;
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .pdf-btn:hover {
+      background: #ef4444;
+    }
+
+    /* Page Inner Content Container */
+    .content-container {
+      padding: 26px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Header Banner Title Row */
+    .panel-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-header-title {
+      font-size: 22px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+    }
+
+    .panel-subtitle {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .header-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #000000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      transition: transform 0.15s ease;
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-red {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+      color: #ffffff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      transition: transform 0.15s ease;
+    }
+
+    .btn-red:hover {
+      transform: translateY(-2px);
+    }
+
+    /* ================= KPI CARDS GRID ================= */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1;
+    }
+
+    .kpi-value.blue { color: #38bdf8; }
+    .kpi-value.green { color: #10b981; }
+    .kpi-value.red { color: #ef4444; }
+
+    /* ================= CYAN SMTP ALERT GATEWAY BOX ================= */
+    .smtp-gateway-card {
+      background: var(--bg-card);
+      border: 1.5px solid #00f0ff;
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+    }
+
+    .smtp-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .smtp-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .smtp-status-pill {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid #00f0ff;
+      color: #00f0ff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .smtp-inner-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .smtp-dispatch-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .smtp-sub-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .smtp-sub-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .smtp-input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .input-dark {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--bg-card-border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      width: 280px;
+      transition: border 0.2s ease;
+    }
+
+    .input-dark:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .btn-test-send {
+      background: rgba(0, 240, 255, 0.15);
+      border: 1px solid #00f0ff;
+      color: #00f0ff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-test-send:hover {
+      background: #00f0ff;
+      color: #000;
+    }
+
+    /* ================= ANNOUNCEMENT BROADCAST CARD ================= */
+    .card-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 14px;
+      padding: 22px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .broadcast-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 3fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .select-dark {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--bg-card-border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      width: 100%;
+    }
+
+    /* ================= AUDIT TABLES ================= */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    .custom-table th {
+      padding: 12px 16px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--bg-card-border);
+    }
+
+    .custom-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    .custom-table tbody tr:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .student-id-link {
+      color: #38bdf8;
+      font-weight: 700;
+      text-decoration: none;
+      font-family: var(--font-mono);
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-block;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.safe {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+
+    .status-badge.moderate {
+      background: rgba(234, 179, 8, 0.15);
+      color: #eab308;
+      border: 1px solid #eab308;
+    }
+
+    .status-badge.high-risk {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .advice-pill {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #d1d5db;
+      line-height: 1.4;
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .filter-pill-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--bg-card-border);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-pill.active {
+      background: var(--bg-card-border);
+      color: var(--text-main);
+      border-color: var(--accent-gold);
+    }
+
+    .filter-pill.red-text { color: #ef4444; }
+    .filter-pill.yellow-text { color: #eab308; }
+    .filter-pill.green-text { color: #10b981; }
+
+    /* ================= TWO-COLUMN LAYOUTS ================= */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .dept-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .dept-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dept-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .badge-code {
+      background: #0284c7;
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 8px;
+    }
+
+    .section-pill-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .section-tag {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--bg-card-border);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ================= MOBILE RESPONSIVENESS ================= */
+    .mobile-menu-btn {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      color: var(--text-main);
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 998;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (max-width: 900px) {
+      .mobile-menu-btn {
+        display: flex;
+      }
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 999;
+        width: 260px;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.5);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+      }
+      .top-header {
+        padding: 0 14px;
+      }
+      .welcome-title {
+        font-size: 13.5px;
+      }
+      .kpi-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .grid-2col {
+        grid-template-columns: 1fr !important;
+      }
+      .broadcast-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .smtp-inner-box {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .smtp-input-group {
+        width: 100%;
+        flex-direction: column;
+      }
+      .smtp-input-group input {
+        width: 100% !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- MOBILE BACKDROP OVERLAY -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand-header">
+        <div class="brand-icon">A</div>
+        <div class="brand-title">AttendIQ AI</div>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-item active" onclick="switchTab('overview')">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+          <span>Admin Overview</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('users')">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+          <span>Manage Users</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('depts')">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M3 21h18M3 7v14M21 7v14M6 11v6M10 11v6M14 11v6M18 11v6M12 3L2 7h20L12 3z"/></svg></span>
+          <span>Depts & Sections</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('courses')">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+          <span>Course Assignments</span>
+        </div>
+      </nav>
+    </div>
+
+    <a href="/logout" class="logout-btn">
+      <span>[-> Logout</span>
+    </a>
+  </aside>
+
+  <!-- ================= MAIN WRAPPER ================= -->
+  <div class="main-wrapper">
+
+    <!-- TOP HEADER -->
+    <header class="top-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="welcome-meta">
+          <div class="welcome-title">
+            Welcome back, System Admin
+            <span class="role-badge">Role: ADMIN</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Theme Switcher Dropdown -->
+        <div class="theme-dropdown-container">
+          <button class="theme-btn" onclick="toggleThemeMenu()">
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0-10 10c0 5.5 4.5 10 10 10a2.5 2.5 0 0 0 2.5-2.5c0-.6-.2-1.1-.6-1.5-.4-.4-.6-.9-.6-1.5 0-1.1.9-2 2-2h1.5a4.5 4.5 0 0 0 4.5-4.5c0-4.4-4-8-9.3-8z"/></svg></span>
+            <span id="current-theme-name">Amber Sunset</span>
+            <span>∨</span>
+          </button>
+
+          <div class="theme-menu" id="themeMenu">
+            <div class="theme-opt" onclick="setTheme('midnight', 'Midnight Dark')">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span> Midnight Dark
+            </div>
+            <div class="theme-opt" onclick="setTheme('light', 'Light Clean')">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></span> Light Clean
+            </div>
+            <div class="theme-opt" onclick="setTheme('emerald', 'Emerald Forest')">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M12 2L4 12h5l-4 8h14l-4-8h5z"/></svg></span> Emerald Forest
+            </div>
+            <div class="theme-opt" onclick="setTheme('purple', 'Nebula Purple')">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.38 5.38 0 0 1-4.4 2.26 5.4 5.4 0 0 1-5.5-5.5c0-1.8 0.9-3.4 2.26-4.4A9 9 0 0 0 12 3z"/></svg></span> Nebula Purple
+            </div>
+            <div class="theme-opt" onclick="setTheme('amber', 'Amber Sunset')">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3.5z"/></svg></span> Amber Sunset
+            </div>
+          </div>
+        </div>
+
+        <button class="bell-btn" title="Notifications"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+
+        <a href="/api/admin/certificate/pdf" target="_blank" class="pdf-btn">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> PDF Certificate
+        </a>
+      </div>
+    </header>
+
+    <!-- CONTENT CONTAINER -->
+    <main class="content-container">
+
+      <!-- ================= TAB 1: ADMIN OVERVIEW ================= -->
+      <div class="tab-content active" id="tab-overview">
+        <div class="panel-header-row">
+          <div>
+            <h1 class="panel-header-title">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Admin Control Center
+            </h1>
+            <p class="panel-subtitle">Global Attendance Monitoring, System Governance & Risk Interventions</p>
+          </div>
+
+          <div class="header-cta-group">
+            <button class="btn-gold" onclick="switchTab('users')">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg></span> User Management
+            </button>
+            <button class="btn-red" onclick="executeBatchScan()">
+              <span><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle; display:inline-block;"><polyline points="18 15 12 9 6 15"/></svg></span> Trigger Batch Email Alerts
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI STATS -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">TOTAL STUDENTS</span>
+            <span class="kpi-value">{{ students_cnt }}</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">TOTAL FACULTY</span>
+            <span class="kpi-value blue">{{ faculty_cnt }}</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">SYSTEM ATTENDANCE AVG</span>
+            <span class="kpi-value green">{{ avg_pct }}%</span>
+          </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">HIGH-RISK ALERTS</span>
+            <span class="kpi-value red">{{ high_risk_cnt }}</span>
+          </div>
+        </div>
+
+        <!-- SMTP GATEWAY CARD -->
+        <div class="smtp-gateway-card">
+          <div class="smtp-header-row">
+            <div class="smtp-title">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span> Automated Email Alert Gateway & SMTP Settings
+            </div>
+            <div class="smtp-status-pill">Auto - Scan Active (Every 1m)</div>
+          </div>
+
+          <div class="smtp-inner-box">
+            <div class="smtp-dispatch-info">
+              <span class="smtp-sub-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.71.79-1.81.2-2.55l-2.45-2.45c-.74-.59-1.84-.51-2.55.2z"/><path d="M12 15l-3-3 6.75-6.75a4.5 4.5 0 0 1 6.36 6.36L12 15z"/></svg> Email Diagnostics & Test Dispatch</span>
+              <span class="smtp-sub-desc">Send a sample low-attendance alert to verify SMTP server response.</span>
+              <div class="smtp-input-group">
+                <input type="email" id="testSmtpEmail" class="input-dark" value="lakshmanchowdary2005@gmail.com" />
+                <button class="btn-test-send" onclick="sendTestSmtp()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.71.79-1.81.2-2.55l-2.45-2.45c-.74-.59-1.84-.51-2.55.2z"/><path d="M12 15l-3-3 6.75-6.75a4.5 4.5 0 0 1 6.36 6.36L12 15z"/></svg> Test Send</button>
+              </div>
+            </div>
+
+            <button class="btn-gold" onclick="executeBatchScan()" style="height: 48px; padding: 0 24px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle; display:inline-block;"><polyline points="18 15 12 9 6 15"/></svg> EXECUTE BATCH EMAIL SCAN (&lt;75%)
+            </button>
+          </div>
+        </div>
+
+        <!-- ANNOUNCEMENT BROADCAST -->
+        <div class="card-panel">
+          <div class="card-title">
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M22 17H2l8-10h4l8 10z"/><path d="M12 17v4"/></svg></span> Institution Announcement Broadcast
+          </div>
+
+          <form id="broadcastForm" onsubmit="handleBroadcast(event)" class="broadcast-grid">
+            <div class="form-group">
+              <label class="form-label">Announcement Title</label>
+              <input type="text" id="annTitle" class="input-dark" placeholder="e.g. Mid-Semester Attendance Threshold Warning" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Severity / Priority</label>
+              <select id="annSeverity" class="select-dark">
+                <option value="Info Notice">Info Notice</option>
+                <option value="High Alert">High Alert</option>
+                <option value="Urgent Notice">Urgent Notice</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Message Content</label>
+              <input type="text" id="annMsg" class="input-dark" placeholder="Write notice message for all students & faculty..." required />
+            </div>
+
+            <button type="submit" class="btn-gold">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M22 17H2l8-10h4l8 10z"/><path d="M12 17v4"/></svg></span> Broadcast
+            </button>
+          </form>
+        </div>
+
+        <!-- AI ATTENDANCE RISK AUDIT TABLE -->
+        <div class="card-panel">
+          <div class="filter-bar">
+            <div>
+              <div class="card-title" style="color:#ef4444;">
+                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> AI Attendance Risk Audit
+              </div>
+              <p class="panel-subtitle">Real-time risk classification & AI recommendation logs</p>
+            </div>
+
+            <div class="filter-pill-group">
+              <input type="text" id="searchStudentInput" class="input-dark" placeholder="<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Search student name" oninput="filterRiskTable()" style="width: 180px; padding: 6px 12px; font-size: 12px;" />
+              <button class="filter-pill active" onclick="setRiskFilter('ALL')">All ({{ risk_audit_list|length }})</button>
+              <button class="filter-pill red-text" onclick="setRiskFilter('HIGH RISK')">High Risk ({{ high_risk_cnt }})</button>
+              <button class="filter-pill yellow-text" onclick="setRiskFilter('MODERATE')">Moderate ({{ moderate_risk_cnt }})</button>
+              <button class="filter-pill green-text" onclick="setRiskFilter('SAFE')">Safe Standing</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-table" id="riskTable">
+              <thead>
+                <tr>
+                  <th>STUDENT ID</th>
+                  <th>STUDENT NAME</th>
+                  <th>CURRENT ATTENDANCE</th>
+                  <th>PREDICTED 30-DAY RATE</th>
+                  <th>RISK STATUS</th>
+                  <th>AI INTERVENTION ADVICE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in risk_audit_list %}
+                <tr class="risk-row" data-name="{{ r.name|lower }}" data-status="{{ r.risk_status }}">
+                  <td><a href="#" class="student-id-link">{{ r.student_id }}</a></td>
+                  <td><b>{{ r.name }}</b></td>
+                  <td>{{ r.current_pct }}</td>
+                  <td style="color:#38bdf8; font-weight:700;">{{ r.predicted_rate }}</td>
+                  <td>
+                    {% if r.risk_status == 'SAFE' %}
+                      <span class="status-badge safe">SAFE</span>
+                    {% elif r.risk_status == 'MODERATE' %}
+                      <span class="status-badge moderate">MODERATE</span>
+                    {% else %}
+                      <span class="status-badge high-risk">HIGH RISK</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="advice-pill">
+                      {{ r.advice }}
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- OUTGOING EMAIL AUDIT LOG -->
+        <div class="card-panel">
+          <div class="panel-header-row" style="margin-bottom: 10px;">
+            <div>
+              <div class="card-title" style="color:#10b981;">
+                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.71.79-1.81.2-2.55l-2.45-2.45c-.74-.59-1.84-.51-2.55.2z"/><path d="M12 15l-3-3 6.75-6.75a4.5 4.5 0 0 1 6.36 6.36L12 15z"/></svg></span> Outgoing Student Email Alert Audit Log
+              </div>
+              <p class="panel-subtitle">Real-time log of automated student email dispatches and delivery status</p>
+            </div>
+
+            <span class="status-badge safe">AI Logged</span>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>DATE / TIME</th>
+                  <th>STUDENT ID</th>
+                  <th>STUDENT NAME & EMAIL</th>
+                  <th>ATTENDANCE %</th>
+                  <th>DELIVERY STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for log in email_audit_logs %}
+                <tr>
+                  <td>{{ log.sent_at }}</td>
+                  <td><a href="#" class="student-id-link">{{ log.student_id }}</a></td>
+                  <td>
+                    <b>{{ log.student_name }}</b><br>
+                    <span style="font-size: 11.5px; color: #38bdf8;">{{ log.email }}</span>
+                  </td>
+                  <td>
+                    <span class="status-badge high-risk">{{ log.attendance_pct }}%</span>
+                  </td>
+                  <td>
+                    <span class="status-badge safe">Delivered (Sent)</span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= TAB 2: MANAGE USERS ================= -->
+      <div class="tab-content" id="tab-users">
+        <div class="panel-header-row">
+          <div>
+            <h1 class="panel-header-title">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> User Management Portal
+            </h1>
+            <p class="panel-subtitle">Register students and faculty members with assigned department & section</p>
+          </div>
+
+          <button class="btn-gold" onclick="switchTab('depts')">
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M3 21h18M3 7v14M21 7v14M6 11v6M10 11v6M14 11v6M18 11v6M12 3L2 7h20L12 3z"/></svg></span> Manage Departments & Sections
+          </button>
+        </div>
+
+        <!-- REGISTER FORMS GRID -->
+        <div class="grid-2col">
+          <!-- REGISTER STUDENT FORM -->
+          <div class="card-panel">
+            <div class="card-title" style="color:var(--accent-gold);">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg></span> Register New Student
+            </div>
+
+            <form onsubmit="handleAddStudent(event)" class="form-group" style="gap: 14px;">
+              <div class="grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Student ID / Hallticket</label>
+                  <input type="text" id="regStuId" class="input-dark" placeholder="e.g. STU106" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" id="regStuName" class="input-dark" placeholder="e.g. Ananya Rao" required />
+                </div>
+              </div>
+
+              <div class="grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Department</label>
+                  <select id="regStuDept" class="select-dark">
+                    {% for d in departments %}
+                      <option value="{{ d.full_name }}">{{ d.full_name }} ({{ d.short_code }})</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Section</label>
+                  <select id="regStuSec" class="select-dark">
+                    <option value="Section A">Section A</option>
+                    <option value="Section B">Section B</option>
+                    <option value="Section C">Section C</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="regStuEmail" class="input-dark" placeholder="e.g. ananya@student.edu" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="regStuPwd" class="input-dark" value="123456" required />
+              </div>
+
+              <button type="submit" class="btn-gold" style="justify-content: center; width: 100%; margin-top: 6px;">
+                + Add Student
+              </button>
+            </form>
+          </div>
+
+          <!-- REGISTER FACULTY FORM -->
+          <div class="card-panel">
+            <div class="card-title" style="color:var(--accent-gold);">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg></span> Register New Faculty
+            </div>
+
+            <form onsubmit="handleAddFaculty(event)" class="form-group" style="gap: 14px;">
+              <div class="grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Faculty Code</label>
+                  <input type="text" id="regFacCode" class="input-dark" placeholder="e.g. FAC04" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Faculty Name</label>
+                  <input type="text" id="regFacName" class="input-dark" placeholder="e.g. Prof. Mehta" required />
+                </div>
+              </div>
+
+              <div class="grid-2col">
+                <div class="form-group">
+                  <label class="form-label">Department</label>
+                  <select id="regFacDept" class="select-dark">
+                    {% for d in departments %}
+                      <option value="{{ d.full_name }}">{{ d.full_name }} ({{ d.short_code }})</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Assigned Section</label>
+                  <select id="regFacSec" class="select-dark">
+                    <option value="Section A">Section A</option>
+                    <option value="Section B">Section B</option>
+                    <option value="Section C">Section C</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Assigned Subject</label>
+                <input type="text" id="regFacSub" class="input-dark" placeholder="e.g. Machine Learning" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="regFacPwd" class="input-dark" value="500452" required />
+              </div>
+
+              <button type="submit" class="btn-gold" style="justify-content: center; width: 100%; margin-top: 6px;">
+                + Add Faculty Member
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- DIRECTORY LISTS GRID -->
+        <div class="grid-2col">
+          <div class="card-panel">
+            <div class="card-title">Enrolled Students</div>
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>DEPT & SEC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for s in enrolled_students %}
+                  <tr>
+                    <td><a href="#" class="student-id-link">{{ s.student_id }}</a></td>
+                    <td><b>{{ s.name }}</b></td>
+                    <td style="font-size:12px; color:var(--text-muted);">{{ s.department }} ({{ s.section }})</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card-panel">
+            <div class="card-title">Faculty Directory</div>
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>CODE</th>
+                    <th>NAME</th>
+                    <th>SUBJECT & SEC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for f in faculty_directory %}
+                  <tr>
+                    <td><span class="badge-code">{{ f.faculty_code }}</span></td>
+                    <td><b>{{ f.name }}</b></td>
+                    <td style="font-size:12px; color:var(--text-muted);">{{ f.subject }} | {{ f.section }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= TAB 3: DEPTS & SECTIONS ================= -->
+      <div class="tab-content" id="tab-depts">
+        <div class="panel-header-row">
+          <div>
+            <h1 class="panel-header-title">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M3 21h18M3 7v14M21 7v14M6 11v6M10 11v6M14 11v6M18 11v6M12 3L2 7h20L12 3z"/></svg></span> Departments & Sections Management
+            </h1>
+            <p class="panel-subtitle">Create institution departments, add sections, and manage academic structures</p>
+          </div>
+        </div>
+
+        <div class="grid-2col">
+          <!-- CREATE DEPT -->
+          <div class="card-panel">
+            <div class="card-title" style="color:var(--accent-gold);">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle; display:inline-block;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Add New Department
+            </div>
+            <form onsubmit="handleAddDept(event)" class="form-group" style="gap:14px;">
+              <div class="form-group">
+                <label class="form-label">Department Full Name</label>
+                <input type="text" id="deptFullName" class="input-dark" placeholder="e.g. Computer Science & Engineering" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Department Short Code</label>
+                <input type="text" id="deptShortCode" class="input-dark" placeholder="e.g. CSE" required />
+              </div>
+
+              <button type="submit" class="btn-gold" style="justify-content: center; width: 100%;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Create Department
+              </button>
+            </form>
+          </div>
+
+          <!-- ADD SECTION -->
+          <div class="card-panel">
+            <div class="card-title" style="color:#38bdf8;">
+              <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle; display:inline-block;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Add Section to Department
+            </div>
+            <form onsubmit="handleAddSection(event)" class="form-group" style="gap:14px;">
+              <div class="form-group">
+                <label class="form-label">Select Target Department</label>
+                <select id="targetDeptCode" class="select-dark">
+                  {% for d in departments %}
+                    <option value="{{ d.short_code }}">{{ d.full_name }} ({{ d.short_code }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Section Name / Identifier</label>
+                <input type="text" id="newSectionName" class="input-dark" placeholder="e.g. Section D" required />
+              </div>
+
+              <button type="submit" class="btn-gold" style="justify-content: center; width: 100%;">
+                + Add Section
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- DEPARTMENT DIRECTORY GRID -->
+        <div class="card-panel">
+          <div class="card-title" style="color:var(--accent-gold);">
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M3 21h18M3 7v14M21 7v14M6 11v6M10 11v6M14 11v6M18 11v6M12 3L2 7h20L12 3z"/></svg></span> Academic Department Directory
+          </div>
+
+          <div class="grid-2col">
+            {% for d in departments %}
+            <div class="dept-card">
+              <div class="dept-header">
+                <div>
+                  <span class="dept-title">{{ d.full_name }}</span>
+                  <span class="badge-code">{{ d.short_code }}</span>
+                </div>
+                <span class="delete-link" onclick="deleteDept('{{ d.short_code }}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Delete</span>
+              </div>
+
+              <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 700;">Configured Sections:</div>
+              <div class="section-pill-container">
+                {% for sec in d.sections %}
+                  <span class="section-tag">{{ sec }} <span style="color:#ef4444; cursor:pointer;">×</span></span>
+                {% endfor %}
+              </div>
+
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">
+                Created On: {{ d.created_at }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= TAB 4: COURSE ASSIGNMENTS ================= -->
+      <div class="tab-content" id="tab-courses">
+        <div class="panel-header-row">
+          <div>
+            <h1 class="panel-header-title">
+              <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; display:inline-block;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span> Course & Subject Allocations
+            </h1>
+            <p class="panel-subtitle">Manage academic subject distributions across departments and faculty</p>
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <div class="card-title">Active Faculty Subject Distribution</div>
+          <div class="table-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>FACULTY NAME</th>
+                  <th>DEPARTMENT</th>
+                  <th>ASSIGNED SUBJECT</th>
+                  <th>ALLOCATED SECTION</th>
+                  <th>TOTAL TARGET HOURS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for f in faculty_directory %}
+                <tr>
+                  <td><b>{{ f.name }}</b> ({{ f.faculty_code }})</td>
+                  <td>{{ f.department }}</td>
+                  <td><span class="badge-code" style="background:#d97706;">{{ f.subject }}</span></td>
+                  <td>{{ f.section }}</td>
+                  <td>60 Hours / Semester</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- JavaScript Interactions & Theme Handler -->
+  <script>
+    // Mobile Sidebar Drawer Toggle
+    function toggleMobileSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      if (sidebar && overlay) {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+      }
+    }
+
+    // Tab switching
+    function switchTab(tabKey) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+
+      const targetTab = document.getElementById('tab-' + tabKey);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+
+      // Highlight active nav icon
+      const navItems = document.querySelectorAll('.nav-item');
+      if (tabKey === 'overview') navItems[0].classList.add('active');
+      if (tabKey === 'users') navItems[1].classList.add('active');
+      if (tabKey === 'depts') navItems[2].classList.add('active');
+      if (tabKey === 'courses') navItems[3].classList.add('active');
+
+      // Close mobile drawer on tab select
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      if (sidebar && sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+      }
+    }
+
+    // Theme dropdown menu
+    function toggleThemeMenu() {
+      document.getElementById('themeMenu').classList.toggle('show');
+    }
+
+    function setTheme(themeKey, themeName) {
+      document.documentElement.setAttribute('data-theme', themeKey);
+      document.getElementById('current-theme-name').innerText = themeName;
+      document.getElementById('themeMenu').classList.remove('show');
+    }
+
+    // Close menu on click outside
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.theme-dropdown-container')) {
+        const m = document.getElementById('themeMenu');
+        if (m) m.classList.remove('show');
+      }
+    });
+
+    // Risk Table Filter
+    let currentRiskFilter = 'ALL';
+    function setRiskFilter(filter) {
+      currentRiskFilter = filter;
+      document.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      filterRiskTable();
+    }
+
+    function filterRiskTable() {
+      const q = document.getElementById('searchStudentInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#riskTable tbody tr');
+
+      rows.forEach(row => {
+        const name = row.getAttribute('data-name');
+        const status = row.getAttribute('data-status');
+
+        const matchesName = name.includes(q);
+        const matchesStatus = (currentRiskFilter === 'ALL') || (status === currentRiskFilter);
+
+        if (matchesName && matchesStatus) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // APIs handlers
+    async function sendTestSmtp() {
+      const email = document.getElementById('testSmtpEmail').value;
+      const res = await fetch('/api/admin/smtp_test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      alert(data.message);
+    }
+
+    async function executeBatchScan() {
+      const res = await fetch('/api/admin/batch_email_scan', { method: 'POST' });
+      const data = await res.json();
+      alert(data.message);
+      window.location.reload();
+    }
+
+    async function handleBroadcast(e) {
+      e.preventDefault();
+      const title = document.getElementById('annTitle').value;
+      const severity = document.getElementById('annSeverity').value;
+      const message = document.getElementById('annMsg').value;
+
+      const res = await fetch('/api/admin/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, severity, message })
+      });
+      const data = await res.json();
+      alert(data.message);
+      document.getElementById('broadcastForm').reset();
+    }
+
+    async function handleAddStudent(e) {
+      e.preventDefault();
+      const payload = {
+        student_id: document.getElementById('regStuId').value,
+        name: document.getElementById('regStuName').value,
+        department: document.getElementById('regStuDept').value,
+        section: document.getElementById('regStuSec').value,
+        email: document.getElementById('regStuEmail').value,
+        password: document.getElementById('regStuPwd').value
+      };
+
+      const res = await fetch('/api/admin/student/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      alert(data.message);
+      if (data.success) window.location.reload();
+    }
+
+    async function handleAddFaculty(e) {
+      e.preventDefault();
+      const payload = {
+        faculty_code: document.getElementById('regFacCode').value,
+        name: document.getElementById('regFacName').value,
+        department: document.getElementById('regFacDept').value,
+        section: document.getElementById('regFacSec').value,
+        subject: document.getElementById('regFacSub').value,
+        password: document.getElementById('regFacPwd').value
+      };
+
+      const res = await fetch('/api/admin/faculty/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      alert(data.message);
+      if (data.success) window.location.reload();
+    }
+
+    async function handleAddDept(e) {
+      e.preventDefault();
+      const payload = {
+        full_name: document.getElementById('deptFullName').value,
+        short_code: document.getElementById('deptShortCode').value
+      };
+
+      const res = await fetch('/api/admin/department/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      alert(data.message);
+      if (data.success) window.location.reload();
+    }
+
+    async function handleAddSection(e) {
+      e.preventDefault();
+      const payload = {
+        dept_code: document.getElementById('targetDeptCode').value,
+        section_name: document.getElementById('newSectionName').value
+      };
+
+      const res = await fetch('/api/admin/section/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      alert(data.message);
+      if (data.success) window.location.reload();
+    }
+
+    async function deleteDept(shortCode) {
+      if (!confirm('Are you sure you want to delete department ' + shortCode + '?')) return;
+      const res = await fetch('/api/admin/department/delete/' + shortCode, { method: 'POST' });
+      const data = await res.json();
+      alert(data.message);
+      if (data.success) window.location.reload();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Faculty</title>
+</head>
+<body>
+
+<h2>Select Faculty</h2>
+
+{% for f in faculty_list %}
+    <p>
+        <b>{{ f.faculty_name }}</b> - {{ f.subject }}
+        <a href="/faculty_direct_login/{{ f.id }}">
+            <button>Login</button>
+        </a>
+    </p>
+{% endfor %}
+
+<br>
+<a href="/logout">Logout</a>
+
+</body>
+</html>

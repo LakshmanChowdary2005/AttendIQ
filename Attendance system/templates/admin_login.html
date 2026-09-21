@@ -3,162 +3,302 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Login</title>
+  <title>Admin Control Center Login | AttendIQ AI</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* Gradient Background Animation */
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    :root {
+      --bg-base: #070a11;
+      --accent-gold: #f59e0b;
+      --accent-amber: #fbbf24;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --border-subtle: rgba(168, 85, 247, 0.25);
+      --border-glow: rgba(168, 85, 247, 0.5);
     }
 
-    /* Scrolling Animation */
-    @keyframes scrollText {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      height: 100vh;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(270deg, #ff416c, #6a11cb, #2575fc, #ff416c);
-      background-size: 800% 800%;
-      animation: gradientShift 15s ease infinite;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-base);
+      color: #f3f4f6;
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       position: relative;
       overflow: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(168, 85, 247, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 10% 90%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 90% 90%, rgba(6, 182, 212, 0.12) 0%, transparent 50%);
+      background-attachment: fixed;
     }
 
-    /* Common Scroll Container */
-    .welcome-scroll,
-    .developer-scroll {
+    /* Ambient Glow */
+    .glow-sphere {
       position: absolute;
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      z-index: 1;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      filter: blur(40px);
       pointer-events: none;
+      z-index: 1;
     }
 
-    /* 🔝 Upper Silver Welcome Scroll */
-    .welcome-scroll {
-      top: 8%;
-    }
-
-    .welcome-scroll span {
-      display: inline-block;
-      font-family: "Times New Roman", Times, serif;
-      font-size: 36px;
-      font-weight: 700;
-      letter-spacing: 5px;
-      color: #c0c0c0; /* Silver */
-      animation: scrollText 22s linear infinite;
-      text-transform: uppercase;
-      text-shadow: 0 0 6px rgba(192, 192, 192, 0.6);
-    }
-
-    /* ⬇ Lower Yellow Developer Scroll */
-    .developer-scroll {
-      bottom: 18%;
-    }
-
-    .developer-scroll span {
-      display: inline-block;
-      font-family: "Times New Roman", Times, serif;
-      font-size: 40px;
-      font-weight: 700;
-      letter-spacing: 6px;
-      color: #ffd700; /* Yellow */
-      animation: scrollText 20s linear infinite;
-      text-transform: uppercase;
-      text-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
-    }
-
-    /* Login Card */
-    .login-container {
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      padding: 40px 35px;
-      width: 350px;
-      box-shadow:
-        0 4px 30px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
-      color: white;
+    /* Glassmorphic Login Container */
+    .login-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 42px 36px;
+      width: 410px;
+      max-width: 92vw;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-subtle);
       text-align: center;
-      z-index: 2;
+      z-index: 10;
+      position: relative;
+      transition: border-color 0.3s ease;
+    }
+
+    .login-card:hover {
+      border-color: var(--border-glow);
+    }
+
+    .portal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      color: #c084fc;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .brand-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 16px;
+      box-shadow: 0 8px 20px rgba(168, 85, 247, 0.35);
     }
 
     h2 {
-      margin-bottom: 30px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .sub-text {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 24px;
+    }
+
+    /* Role Switcher */
+    .role-switcher {
+      display: flex;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+      gap: 4px;
+    }
+
+    .role-tab {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 8px;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+      color: #9ca3af;
+      text-decoration: none;
+      transition: all 0.2s ease;
     }
 
-    input {
+    .role-tab.active {
+      background: var(--accent-purple);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(168, 85, 247, 0.4);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .input-field {
       width: 100%;
-      padding: 12px 18px;
-      margin-bottom: 25px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      background: rgba(255, 255, 255, 0.15);
-      color: white;
+      padding: 13px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
       outline: none;
+      transition: all 0.2s ease;
     }
 
-    input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
+    .input-field:focus {
+      border-color: var(--accent-purple);
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.3);
     }
 
-    button {
+    .input-field::placeholder {
+      color: #6b7280;
+    }
+
+    .submit-btn {
       width: 100%;
       padding: 14px 0;
+      margin-top: 8px;
       border: none;
-      border-radius: 30px;
-      font-size: 18px;
-      font-weight: 600;
-      background: linear-gradient(90deg, #ff512f, #dd2476);
-      color: white;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent-purple), #7e22ce);
+      color: #fff;
       cursor: pointer;
-      box-shadow: 0 5px 15px rgba(221, 36, 118, 0.6);
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(221, 36, 118, 0.9);
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(168, 85, 247, 0.55);
+    }
+
+    .error-alert {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #fb7185;
+      font-weight: 600;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #9ca3af;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .back-link:hover {
+      color: var(--accent-purple);
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Upper Silver Scroll -->
-  <div class="welcome-scroll">
-    <span>WELCOME FOR TAKING ATTENDANCE</span>
-  </div>
+  <div class="glow-sphere"></div>
 
-  <!-- Lower Yellow Scroll -->
-  <div class="developer-scroll">
-    <span>
-      DEVELOPED BY • J LAKSHMAN CHOWDARY • A LIKHITH • K SAKETH CHOWDARY
-    </span>
-  </div>
-
-  <!-- Admin Login -->
-  <div class="login-container">
+  <!-- Admin Login Card -->
+  <div class="login-card">
+    <div class="portal-badge">System Admin Control Center</div>
+    <div class="brand-icon" style="font-size:18px; font-weight:800; color:var(--accent-rose);">[ADM]</div>
     <h2>Admin Login</h2>
-    <form method="POST">
-      <input type="text" name="username" placeholder="Admin Username" required />
-      <input type="password" name="password" placeholder="Admin Password" required />
-      <button type="submit">Login</button>
+    <p class="sub-text">Manage users, system configurations, SMTP gateways & department setups</p>
+
+    <!-- Role Switcher -->
+    <div class="role-switcher">
+      <a href="/student_login" class="role-tab">Student</a>
+      <a href="/faculty_login" class="role-tab">Faculty</a>
+      <a href="/admin_login" class="role-tab active">Admin</a>
+    </div>
+
+    {% if error %}
+      <div class="error-alert">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="POST" action="/admin_login">
+      <div class="form-group">
+        <label>Admin Username / Email</label>
+        <input
+          type="text"
+          name="username"
+          class="input-field"
+          placeholder="e.g. admin"
+          required
+          autocomplete="off"
+          autofocus
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Security Password</label>
+        <input
+          type="password"
+          name="password"
+          class="input-field"
+          placeholder="••••••••"
+          required
+        />
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <span>Authenticate System Admin</span>
+      </button>
     </form>
+
+    <a href="/" class="back-link">← Return to Platform Homepage</a>
   </div>
 
 </body>

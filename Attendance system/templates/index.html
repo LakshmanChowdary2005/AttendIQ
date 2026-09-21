@@ -1,114 +1,945 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Attendance System Login</title>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Attendance & AI Analytics Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 
-    <style>
-      /* ================= WATERMARK SCROLL ================= */
-      @keyframes scrollText {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+  <style>
+    :root {
+      --bg-base: #0d0b07;
+      --bg-card: rgba(26, 20, 13, 0.85);
+      --bg-card-glow: rgba(38, 29, 18, 0.95);
+      --border-subtle: rgba(245, 158, 11, 0.18);
+      --border-glow: rgba(245, 158, 11, 0.4);
+      --accent-gold: #f59e0b;
+      --accent-amber: #fbbf24;
+      --accent-darkgold: #d97706;
+      --accent-emerald: #10b981;
+      --accent-cyan: #06b6d4;
+      --accent-rose: #f43f5e;
+      --text-main: #fef3c7;
+      --text-bright: #ffffff;
+      --text-muted: #d97706;
+      --text-subtle: #92400e;
+    }
+
+    /* 1. Cyberpunk Cyan Theme */
+    body.theme-cyber {
+      --bg-base: #030712;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --bg-card-glow: rgba(31, 41, 55, 0.95);
+      --border-subtle: rgba(6, 182, 212, 0.2);
+      --border-glow: rgba(6, 182, 212, 0.5);
+      --accent-amber: #06b6d4;
+      --accent-gold: #38bdf8;
+      --accent-darkgold: #0284c7;
+      --accent-emerald: #10b981;
+      --accent-cyan: #22d3ee;
+      --accent-rose: #f43f5e;
+      --text-main: #e0f2fe;
+      --text-bright: #ffffff;
+      --text-muted: #38bdf8;
+      --text-subtle: #0284c7;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 85% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 45%);
+    }
+
+    /* 2. Emerald Matrix Theme */
+    body.theme-emerald {
+      --bg-base: #04120d;
+      --bg-card: rgba(12, 35, 26, 0.85);
+      --bg-card-glow: rgba(20, 52, 39, 0.95);
+      --border-subtle: rgba(16, 185, 129, 0.25);
+      --border-glow: rgba(52, 211, 153, 0.5);
+      --accent-amber: #10b981;
+      --accent-gold: #34d399;
+      --accent-darkgold: #059669;
+      --accent-emerald: #10b981;
+      --accent-cyan: #38bdf8;
+      --accent-rose: #fb7185;
+      --text-main: #d1fae5;
+      --text-bright: #ffffff;
+      --text-muted: #34d399;
+      --text-subtle: #059669;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(16, 185, 129, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 85% 20%, rgba(52, 211, 153, 0.12) 0%, transparent 45%);
+    }
+
+    /* 3. Royal Amethyst Purple Theme */
+    body.theme-purple {
+      --bg-base: #0c071e;
+      --bg-card: rgba(26, 17, 53, 0.85);
+      --bg-card-glow: rgba(41, 27, 82, 0.95);
+      --border-subtle: rgba(168, 85, 247, 0.25);
+      --border-glow: rgba(192, 132, 252, 0.5);
+      --accent-amber: #a855f7;
+      --accent-gold: #c084fc;
+      --accent-darkgold: #7e22ce;
+      --accent-emerald: #10b981;
+      --accent-cyan: #06b6d4;
+      --accent-rose: #f43f5e;
+      --text-main: #fae8ff;
+      --text-bright: #ffffff;
+      --text-muted: #c084fc;
+      --text-subtle: #7e22ce;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(168, 85, 247, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 85% 20%, rgba(234, 179, 8, 0.12) 0%, transparent 45%);
+    }
+
+    /* 4. Light Clean Mode */
+    body.theme-light {
+      --bg-base: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-glow: #f1f5f9;
+      --border-subtle: rgba(37, 99, 235, 0.18);
+      --border-glow: rgba(37, 99, 235, 0.35);
+      --accent-amber: #2563eb;
+      --accent-gold: #0284c7;
+      --accent-darkgold: #1d4ed8;
+      --accent-emerald: #059669;
+      --accent-cyan: #0284c7;
+      --accent-rose: #e11d48;
+      --text-main: #0f172a;
+      --text-bright: #0284c7;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 85% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 45%);
+    }
+
+    /* Theme Dropdown Menu */
+    .theme-dropdown-container {
+      position: relative;
+    }
+
+    .theme-menu-popup {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 195px;
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      padding: 6px;
+      z-index: 100;
+    }
+
+    .theme-menu-popup.show {
+      display: block;
+    }
+
+    .theme-opt {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theme-opt:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent-gold);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      color: #e5e7eb;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 12%, rgba(245, 158, 11, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 0% 0%, rgba(217, 119, 6, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Top Navigation Bar */
+    header.nav-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 40px;
+      background: rgba(13, 11, 7, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .brand-logo span.gold {
+      color: var(--accent-gold);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 8px #34d399;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hdr-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: #d1d5db;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .hdr-btn:hover {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--accent-gold);
+      color: #fff;
+    }
+
+    /* Main Container */
+    .hero-container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      text-align: center;
+    }
+
+    /* Hero Headline Section */
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--accent-amber);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      padding: 6px 16px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.8px;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: #9ca3af;
+      max-width: 760px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+
+    /* KPI Metrics Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 800px;
+      margin: 0 auto 40px;
+    }
+
+    @media (max-width: 800px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    .kpi-box {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 16px;
+      text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .kpi-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-glow);
+    }
+
+    .kpi-head {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .kpi-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-amber);
+    }
+
+    /* Portal Gateway Card */
+    .gateway-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      max-width: 540px;
+      margin: 0 auto 60px;
+      padding: 32px 28px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(245, 158, 11, 0.15);
+      position: relative;
+    }
+
+    .gateway-header {
+      margin-bottom: 24px;
+    }
+
+    .gateway-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .gateway-sub {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    /* Role Tabs */
+    .role-tabs {
+      background: rgba(13, 11, 7, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 40px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+
+    .role-tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 30px;
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .role-tab-btn:hover {
+      color: #fff;
+    }
+
+    .role-tab-btn.active {
+      background: linear-gradient(135deg, var(--accent-gold), var(--accent-darkgold));
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+    }
+
+    /* Form Styles */
+    .form-panel {
+      display: none;
+      text-align: left;
+    }
+
+    .form-panel.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent-amber);
+      margin-bottom: 6px;
+    }
+
+    .input-box {
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(13, 11, 7, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-box:focus {
+      border-color: var(--accent-gold);
+    }
+
+    .submit-gold-btn {
+      width: 100%;
+      padding: 14px 0;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-amber), var(--accent-gold));
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
+      transition: all 0.2s;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-gold-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.65);
+    }
+
+    /* Quick Demo Links */
+    .quick-links-bar {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border-subtle);
+      text-align: center;
+    }
+
+    .quick-lbl {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
+    .demo-pills-wrap {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .demo-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: #d1d5db;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .demo-pill:hover {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--accent-gold);
+      color: #fff;
+    }
+
+    /* Comprehensive Features Grid (4 Cards) */
+    .features-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .features-section-sub {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 32px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 500px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 24px 20px;
+      text-align: left;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .feature-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 12.5px;
+      color: #9ca3af;
+      line-height: 1.65;
+    }
+
+    /* Footer */
+    footer.portal-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #6b7280;
+      background: rgba(13, 11, 7, 0.9);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-brand {
+      color: var(--accent-amber);
+      font-weight: 600;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 600px) {
+      header.nav-header {
+        padding: 12px 16px;
+        flex-direction: column;
+        gap: 12px;
       }
-
-      body {
-        font-family: Arial, sans-serif;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(120deg, #6a11cb, #2575fc);
-        margin: 0;
-        overflow: hidden;
-        position: relative;
+      .hero-container {
+        padding: 24px 12px 40px;
       }
-
-      /* Scrollable Watermark */
-      .watermark {
-        position: absolute;
-        bottom: 15%;
-        width: 100%;
-        overflow: hidden;
-        white-space: nowrap;
-        pointer-events: none;
+      .hero-title {
+        font-size: 26px;
       }
-
-      .marquee {
-        display: inline-flex;
-        width: max-content;
-        animation: scrollText 20s linear infinite;
+      .kpi-grid {
+        grid-template-columns: 1fr;
       }
-
-      .marquee span {
-        font-family: "Times New Roman", Times, serif;
-        font-size: 34px;
-        font-weight: bold;
-        color: #ffd700;
-        letter-spacing: 5px;
-        padding-right: 60px;
-        text-shadow: 0 0 8px gold;
-        text-transform: uppercase;
+      .gateway-card {
+        padding: 20px 14px;
+        border-radius: 16px;
       }
-
-      /* ================= LOGIN BOX ================= */
-
-      .box {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        width: 320px;
-        text-align: center;
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        z-index: 2;
+      .role-tab-btn {
+        padding: 8px 6px;
+        font-size: 11.5px;
       }
+    }
+  </style>
+</head>
 
-      h2 {
-        margin-bottom: 20px;
-      }
+<body>
 
-      a button {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        font-size: 16px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-      }
-
-      .faculty {
-        background: #ff512f;
-        color: white;
-      }
-
-      .student {
-        background: #36d1dc;
-        color: white;
-      }
-    </style>
-  </head>
-
-  <body>
-
-    <!-- Scrollable Watermark -->
-    <div class="watermark">
-      <div class="marquee">
-        <span>DEVELOPED BY • J LAKSHMAN CHOWDARY • A LIKHITH • K SAKETH CHOWDARY</span>
-        <span>DEVELOPED BY • J LAKSHMAN CHOWDARY • A LIKHITH • K SAKETH CHOWDARY</span> 
+  <!-- Top Navigation Header Bar -->
+  <header class="nav-header">
+    <div class="brand-logo">
+      <span>Attend<span class="gold">AI</span></span>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        <span>System Operational</span>
       </div>
     </div>
 
-    <!-- Login Box -->
-    <div class="box">
-      <h2>Login As</h2>
+    <div class="header-actions">
+      <div class="theme-dropdown-container">
+        <button class="hdr-btn" id="themeSelectBtn" onclick="toggleThemeMenu(event)" style="background: rgba(245, 158, 11, 0.12); border-color: var(--border-glow); color: var(--accent-amber);">
+          <span id="currentThemeLabel">Amber Sunset (Default)</span>
+          <span style="font-size: 10px; margin-left: 4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle; display:inline-block;"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </button>
 
-      <a href="/admin_login">
-        <button class="faculty">Faculty Login</button>
-      </a>
+        <div class="theme-menu-popup" id="themeMenuPopup">
+          <div class="theme-opt" onclick="setLandingTheme('', 'Amber Sunset (Default)')">
+            <span>Amber Sunset (Default)</span>
+          </div>
+          <div class="theme-opt" onclick="setLandingTheme('theme-cyber', 'Cyberpunk Cyan')">
+            <span>Cyberpunk Cyan</span>
+          </div>
+          <div class="theme-opt" onclick="setLandingTheme('theme-emerald', 'Emerald Matrix')">
+            <span>Emerald Matrix</span>
+          </div>
+          <div class="theme-opt" onclick="setLandingTheme('theme-purple', 'Royal Amethyst')">
+            <span>Royal Amethyst</span>
+          </div>
+          <div class="theme-opt" onclick="setLandingTheme('theme-light', 'Light Clean')">
+            <span>Light Clean</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-      <a href="/student_login">
-        <button class="student">Student Login</button>
-      </a>
+  <div class="hero-container">
+
+    <!-- Hero Tag & Titles -->
+    <div class="hero-tag">
+      <span>Next-Gen Academic Intelligence</span>
     </div>
 
-  </body>
+    <h1 class="hero-title">Smart Attendance & AI Analytics Platform</h1>
+    <p class="hero-subtitle">
+      Consolidating basic attendance management with real-time risk predictions, AI-assisted parent alerts, 1-click reports generation, and instant reporting.
+    </p>
+
+    <!-- KPI Metrics Ribbon (3 Cards) -->
+    <div class="kpi-grid">
+      <div class="kpi-box">
+        <div class="kpi-head">Students</div>
+        <div class="kpi-val">{{ students_cnt }}</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-head">Faculty Members</div>
+        <div class="kpi-val">{{ faculty_cnt }}</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-head">Avg Attendance</div>
+        <div class="kpi-val">{{ avg_pct }}%</div>
+      </div>
+    </div>
+
+    <!-- Institutional Portal Gateway Card -->
+    <div class="gateway-card">
+      <div class="gateway-header">
+        <div class="gateway-title">
+          <span>Institutional Portal Gateway</span>
+        </div>
+        <div class="gateway-sub">Select your academic role to sign in or view your dashboard</div>
+      </div>
+
+      <!-- Role Tabs -->
+      <div class="role-tabs">
+        <button class="role-tab-btn active" id="tabBtnFaculty" onclick="switchRole('faculty')">
+          <span>Faculty</span>
+        </button>
+        <button class="role-tab-btn" id="tabBtnStudent" onclick="switchRole('student')">
+          <span>Student</span>
+        </button>
+        <button class="role-tab-btn" id="tabBtnAdmin" onclick="switchRole('admin')">
+          <span>Admin</span>
+        </button>
+      </div>
+
+      <!-- Faculty Form Panel -->
+      <div id="formFaculty" class="form-panel active">
+        <form method="POST" action="/faculty_login">
+          <div class="form-group">
+            <label>Faculty Code</label>
+            <input type="text" name="username" id="facultyUsername" class="input-box" placeholder="Enter Faculty Code (e.g. cloud, devops, cns)" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" id="facultyPassword" class="input-box" placeholder="Enter Password" required>
+          </div>
+          <button type="submit" class="submit-gold-btn">
+            <span>SIGN IN AS FACULTY</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Student Form Panel -->
+      <div id="formStudent" class="form-panel">
+        <form method="POST" action="/student_login">
+          <div class="form-group">
+            <label>Student Roll Number</label>
+            <input type="text" name="roll" id="studentRollInput" class="input-box" placeholder="Enter Roll Number (e.g. 23501A1201)" required autocomplete="off">
+          </div>
+          <button type="submit" class="submit-gold-btn">
+            <span>ACCESS STUDENT PORTAL</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Admin Form Panel -->
+      <div id="formAdmin" class="form-panel">
+        <form method="POST" action="/admin_login">
+          <div class="form-group">
+            <label>Admin Username</label>
+            <input type="text" name="username" class="input-box" placeholder="Admin Username" required>
+          </div>
+          <div class="form-group">
+            <label>Admin Password</label>
+            <input type="password" name="password" class="input-box" placeholder="Admin Password" required>
+          </div>
+          <button type="submit" class="submit-gold-btn">
+            <span>SIGN IN AS ADMIN</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick 1-Click Demo Logins -->
+      <div class="quick-links-bar">
+        <div class="quick-lbl">Quick Demo / 1-Click Demo Logins:</div>
+        <div class="demo-pills-wrap">
+          <a href="javascript:void(0)" class="demo-pill" onclick="quickLoginFaculty('devops', '123')">Faculty</a>
+          <a href="javascript:void(0)" class="demo-pill" onclick="quickLoginStudent('23501A1201')">Student</a>
+          <a href="javascript:void(0)" class="demo-pill" onclick="quickLoginAdmin('admin', '500452')">Admin</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive Intelligent Features Grid (4 Cards) -->
+    <h3 class="features-section-title">Comprehensive Intelligent Features</h3>
+    <p class="features-section-sub">Designed for automated tracking, risk intervention, and high-efficiency workflow</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrap" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--accent-gold);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+        <h4 class="feature-title">AI Risk Analytics</h4>
+        <p class="feature-desc">Predictive algorithms continuously monitor student attendance, automatically identifying at-risk students below threshold limits with proactive intervention alerts.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap" style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.3); color: var(--accent-cyan);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 14l5-5-2-2-5 5-2 2 4 2z"></path>
+            <path d="M9 11l-4 4 2 2 4-4"></path>
+            <path d="M5 19l2 2"></path>
+            <path d="M19 5l2 2"></path>
+          </svg>
+        </div>
+        <h4 class="feature-title">AI Assignment Generator</h4>
+        <p class="feature-desc">Instantly generates subject-tailored academic assignments, interactive quizzes, and coding challenges customized to course syllabus modules with AI assistance.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--accent-emerald);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h4 class="feature-title">PDF & Excel Export</h4>
+        <p class="feature-desc">Generates official institutional attendance certificates, printable PDF audit logs, and complete department analytical spreadsheets ready for compliance in one click.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrap" style="background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: var(--accent-rose);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+        </div>
+        <h4 class="feature-title">Automated Notifications</h4>
+        <p class="feature-desc">Background scheduler dispatches real-time automated email notifications for low attendance alongside instant campus-wide broadcast announcements.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="portal-footer">
+    <div>
+      <span class="footer-brand">AttendIQ AI Platform</span> &bull; v2.5 Release &bull; Smart Attendance & AI Analytics Engine
+    </div>
+    <div style="margin-top: 4px; font-size: 11px; color: #6b7280;">
+      &copy; 2026 Smart Attendance System &bull; High-Performance Institutional Analytics
+    </div>
+  </footer>
+
+  <script>
+    function switchRole(role) {
+      document.querySelectorAll('.role-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+
+      if (role === 'faculty') {
+        document.getElementById('tabBtnFaculty').classList.add('active');
+        document.getElementById('formFaculty').classList.add('active');
+      } else if (role === 'student') {
+        document.getElementById('tabBtnStudent').classList.add('active');
+        document.getElementById('formStudent').classList.add('active');
+      } else if (role === 'admin') {
+        document.getElementById('tabBtnAdmin').classList.add('active');
+        document.getElementById('formAdmin').classList.add('active');
+      }
+    }
+
+    function quickLoginFaculty(code, pwd) {
+      switchRole('faculty');
+      document.getElementById('facultyUsername').value = code;
+      document.getElementById('facultyPassword').value = pwd;
+      document.querySelector('#formFaculty form').submit();
+    }
+
+    function quickLoginStudent(roll) {
+      switchRole('student');
+      document.getElementById('studentRollInput').value = roll;
+      document.querySelector('#formStudent form').submit();
+    }
+
+    function quickLoginAdmin(user, pwd) {
+      switchRole('admin');
+      const adminForm = document.querySelector('#formAdmin form');
+      if (adminForm) {
+        const uInput = adminForm.querySelector('input[name="username"]');
+        const pInput = adminForm.querySelector('input[name="password"]');
+        if (uInput) uInput.value = user || 'admin';
+        if (pInput) pInput.value = pwd || '500452';
+        adminForm.submit();
+      }
+    }
+
+    // Theme Switcher Engine
+    function toggleThemeMenu(e) {
+      if (e) e.stopPropagation();
+      const m = document.getElementById('themeMenuPopup');
+      if (m) m.classList.toggle('show');
+    }
+
+    function setLandingTheme(themeClass, themeName) {
+      document.body.className = themeClass;
+      document.getElementById('currentThemeLabel').innerText = themeName;
+      localStorage.setItem('landing_theme', themeClass);
+      localStorage.setItem('landing_theme_name', themeName);
+      const m = document.getElementById('themeMenuPopup');
+      if (m) m.classList.remove('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedClass = localStorage.getItem('landing_theme');
+      const savedName = localStorage.getItem('landing_theme_name');
+      if (savedClass !== null && savedName) {
+        document.body.className = savedClass;
+        document.getElementById('currentThemeLabel').innerText = savedName;
+      }
+    });
+
+    window.addEventListener('click', (e) => {
+      if (!e.target.closest('.theme-dropdown-container')) {
+        const m = document.getElementById('themeMenuPopup');
+        if (m) m.classList.remove('show');
+      }
+    });
+  </script>
+</body>
 </html>

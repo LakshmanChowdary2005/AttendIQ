@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AttendIQ AI | Native Mobile App & Local LLM Gateway</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #070a11;
+      --bg-card: rgba(15, 23, 42, 0.9);
+      --bg-card-border: rgba(56, 189, 248, 0.2);
+      --accent-gold: #f59e0b;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 14px;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(245, 158, 11, 0.12) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* Header Nav */
+    header.demo-header {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .nav-link-btn {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 6px 14px;
+      border: 1px solid var(--accent-cyan);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-link-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+    }
+
+    /* Main Showcase Container */
+    .showcase-grid {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .showcase-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Smartphone Simulator Frame */
+    .phone-frame {
+      width: 380px;
+      height: 720px;
+      background: #090d16;
+      border: 10px solid #1e293b;
+      border-radius: 44px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 2px var(--bg-card-border);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto;
+    }
+
+    .phone-notch {
+      width: 130px;
+      height: 22px;
+      background: #1e293b;
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+      margin: 0 auto;
+      z-index: 50;
+    }
+
+    .phone-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 14px;
+      overflow-y: auto;
+    }
+
+    .phone-app-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 12px;
+    }
+
+    .phone-app-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
+
+    .phone-nav-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .phone-tab {
+      flex: 1;
+      padding: 6px 0;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .phone-tab.active {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    /* Mobile Chat & Cards */
+    .mobile-chat-win {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    .mobile-input-bar {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mobile-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .mobile-btn {
+      background: var(--accent-cyan);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    /* USP Cards Side */
+    .usp-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .usp-card {
+      background: var(--bg-card);
+      border: 1px solid var(--bg-card-border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .usp-badge {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+    }
+
+    .usp-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .usp-desc {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .llm-box {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10b981;
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="demo-header">
+    <div class="brand-title">AttendIQ AI &bull; Mobile & Local LLM Suite</div>
+    <div style="display:flex; gap:10px;">
+      <a href="/student_portal" class="nav-link-btn">Student Portal</a>
+      <a href="/faculty_dashboard" class="nav-link-btn">Faculty Dashboard</a>
+      <a href="/admin_dashboard" class="nav-link-btn">Admin Panel</a>
+      <a href="/" class="nav-link-btn">Home Gateway</a>
+    </div>
+  </header>
+
+  <div class="showcase-grid">
+
+    <!-- Interactive Phone Simulator -->
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        
+        <div class="phone-app-bar">
+          <div class="phone-app-title">AttendIQ AI Mobile</div>
+          <span style="font-size:10px; background:rgba(16, 185, 129, 0.2); color:#10b981; padding:2px 6px; border-radius:4px; font-weight:700;">Local LLM Ready</span>
+        </div>
+
+        <div class="phone-nav-tabs">
+          <div class="phone-tab active" onclick="switchPhoneTab('tutor', this)">AI Tutor</div>
+          <div class="phone-tab" onclick="switchPhoneTab('alerts', this)">Alerts</div>
+          <div class="phone-tab" onclick="switchPhoneTab('auth', this)">Mobile Login</div>
+        </div>
+
+        <!-- Phone Tab 1: AI Tutor -->
+        <div id="phoneTabTutor" style="display:flex; flex-direction:column; flex:1;">
+          <div class="mobile-chat-win" id="phoneChatWin">
+            <b>AttendIQ Local AI Tutor System Active</b><br>
+            <i>Powered by 100% Offline Local LLM (Ollama - Llama 3 / Mistral) with fallback NLP.</i><br><br>
+            Ask any question below (e.g. Explain BST vs AVL tree)...
+          </div>
+          <div class="mobile-input-bar">
+            <input type="text" id="phoneChatInput" class="mobile-input" placeholder="Ask AI tutor..." onkeydown="if(event.key==='Enter')askPhoneTutor()">
+            <button class="mobile-btn" onclick="askPhoneTutor()">Ask</button>
+          </div>
+        </div>
+
+        <!-- Phone Tab 2: Targeted Alerts -->
+        <div id="phoneTabAlerts" style="display:none; flex-direction:column; gap:10px;">
+          <div style="background:rgba(244, 63, 94, 0.15); border:1px solid #f43f5e; border-radius:10px; padding:10px; font-size:11.5px; color:#fff;">
+            <b>ATTENDANCE RISK ALERT (< 75%)</b><br>
+            Your current attendance rate is 50.0%. Please attend remaining classes to avoid formal detention warnings!
+          </div>
+          <div style="background:rgba(56, 189, 248, 0.1); border:1px solid #38bdf8; border-radius:10px; padding:10px; font-size:11.5px; color:#fff;">
+            <b>Automated Notification:</b> Parent email alert dispatched via background SMTP scheduler.
+          </div>
+        </div>
+
+        <!-- Phone Tab 3: Auth -->
+        <div id="phoneTabAuth" style="display:none; flex-direction:column; gap:10px;">
+          <div style="font-size:12px; font-weight:700; color:#fff; margin-bottom:4px;">Mobile REST API Sign In:</div>
+          <input type="text" id="phoneRollInput" class="mobile-input" placeholder="Roll Number (e.g. 23501A1201)">
+          <button class="mobile-btn" onclick="testMobileLogin()" style="width:100%;">Biometric Sign In</button>
+          <div id="phoneAuthRes" style="font-size:11px; color:#34d399; font-family:monospace; margin-top:6px;"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- USPs & Architecture Side -->
+    <div class="usp-panel">
+      
+      <div>
+        <h1 class="section-heading">Unique Selling Points & System Architecture</h1>
+        <p style="font-size:13px; color:var(--text-muted);">Core highlights integrating 100% Offline Local LLMs, Targeted Risk Interventions, and Native Mobile REST APIs.</p>
+      </div>
+
+      <!-- Local LLM Status Banner -->
+      <div class="llm-box">
+        <div>
+          <div style="font-weight:800; color:#10b981; font-size:14px;">Local LLM Core Engine Status: ACTIVE & READY</div>
+          <div style="font-size:12px; color:#d1d5db;">Configured for Ollama (`http://localhost:11434`) running Llama 3 (8B) / Mistral / Phi-3. Zero API cost & complete student data privacy.</div>
+        </div>
+      </div>
+
+      <!-- USP 1 -->
+      <div class="usp-card">
+        <span class="usp-badge" style="background:rgba(244, 63, 94, 0.2); color:#f43f5e; border:1px solid #f43f5e;">ALERT</span>
+        <div>
+          <div class="usp-title">Targeted Low-Attendance Alert Marquee & Bell</div>
+          <div class="usp-desc">Exclusive red marquee alert banner and bell notification triggered ONLY for students below 75% threshold, keeping high-performing students clutter-free.</div>
+        </div>
+      </div>
+
+      <!-- USP 2 -->
+      <div class="usp-card">
+        <span class="usp-badge" style="background:rgba(56, 189, 248, 0.2); color:#38bdf8; border:1px solid #38bdf8;">LOCAL LLM</span>
+        <div>
+          <div class="usp-title">100% Offline Local LLM Academic Socratic Tutor</div>
+          <div class="usp-desc">Integrates Local Llama 3 / Mistral models to deliver instant, brief, direct academic solutions, code snippets, and practice challenges without cloud API charges or privacy leaks.</div>
+        </div>
+      </div>
+
+      <!-- USP 3 -->
+      <div class="usp-card">
+        <span class="usp-badge" style="background:rgba(245, 158, 11, 0.2); color:#f59e0b; border:1px solid #f59e0b;">JAM STUDIO</span>
+        <div>
+          <div class="usp-title">JAM Extempore Studio (Technical & Non-Technical)</div>
+          <div class="usp-desc">Features a rich selection of technical (BST, System Design) and non-technical topics (Public Speaking, Time Management) to boost student fluency.</div>
+        </div>
+      </div>
+
+      <!-- USP 4 -->
+      <div class="usp-card">
+        <span class="usp-badge" style="background:rgba(16, 185, 129, 0.2); color:#10b981; border:1px solid #10b981;">REPORTS</span>
+        <div>
+          <div class="usp-title">1-Click Official PDF Certificates & Excel Reporting</div>
+          <div class="usp-desc">Native ReportLab PDF generator produces security-badged certificates alongside complete OpenPyXL multi-department analytical spreadsheets.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    function switchPhoneTab(tabName, el) {
+      document.querySelectorAll('.phone-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+
+      document.getElementById('phoneTabTutor').style.display = (tabName === 'tutor') ? 'flex' : 'none';
+      document.getElementById('phoneTabAlerts').style.display = (tabName === 'alerts') ? 'flex' : 'none';
+      document.getElementById('phoneTabAuth').style.display = (tabName === 'auth') ? 'flex' : 'none';
+    }
+
+    async function askPhoneTutor() {
+      const input = document.getElementById('phoneChatInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      const win = document.getElementById('phoneChatWin');
+      win.innerHTML += `<br><br><b>You:</b> ${val}<br><i>Local LLM processing...</i>`;
+      input.value = '';
+      win.scrollTop = win.scrollHeight;
+
+      const res = await fetch('/api/mobile/tutor/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: val, subject: 'Data Structures & Algorithms' })
+      });
+      const data = await res.json();
+      win.innerHTML = win.innerHTML.replace('<i>Local LLM processing...</i>', data.reply);
+      win.scrollTop = win.scrollHeight;
+    }
+
+    async function testMobileLogin() {
+      const roll = document.getElementById('phoneRollInput').value || '23501A1201';
+      const res = await fetch('/api/mobile/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'student', username: roll })
+      });
+      const data = await res.json();
+      document.getElementById('phoneAuthRes').innerText = 'STATUS 200 OK:\n' + JSON.stringify(data, null, 2);
+    }
+  </script>
+
+</body>
+</html>

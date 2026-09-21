@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Faculty Dashboard</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            margin:20px;
+        }
+
+        .grid{
+            display:grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap:15px;
+        }
+
+        .card{
+            border:1px solid #ccc;
+            padding:10px;
+            border-radius:8px;
+            text-align:center;
+            background:#f9f9f9;
+        }
+
+        .card:hover{
+            background:#e6f2ff;
+        }
+
+        .roll{
+            font-weight:bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Faculty: {{ faculty[0] }}</h2>
+<h3>Subject: {{ faculty[1] }}</h3>
+
+<a href="/logout">
+    <button>Logout</button>
+</a>
+
+<hr>
+
+<form method="POST" action="/mark">
+
+    <label>Select Hour:</label>
+    <select name="hour" required>
+        <option value="">--Select Hour--</option>
+        <option value="1">1st Hour</option>
+        <option value="2">2nd Hour</option>
+        <option value="3">3rd Hour</option>
+        <option value="4">4th Hour</option>
+        <option value="5">5th Hour</option>
+        <option value="6">6th Hour</option>
+    </select>
+
+    <br><br>
+
+    <div class="grid">
+        {% for s in students %}
+        <label class="card">
+            <input type="checkbox" name="present" value="{{ s[0] }}">
+            <div class="roll">{{ s[1] }}</div>
+            <div>{{ s[2] }}</div>
+        </label>
+        {% endfor %}
+    </div>
+
+    <br>
+    <button type="submit">Submit Attendance</button>
+
+</form>
+
+</body>
+</html>
