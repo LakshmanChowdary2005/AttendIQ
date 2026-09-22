@@ -140,6 +140,36 @@ def ensure_sqlite_demo_db(db_path):
         """)
 
         cur.execute("""
+        CREATE TABLE IF NOT EXISTS attendance (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id TEXT NOT NULL,
+            date TEXT NOT NULL,
+            status TEXT NOT NULL,
+            subject TEXT NOT NULL,
+            hour INTEGER DEFAULT 1
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS departments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            department_name TEXT NOT NULL,
+            short_code TEXT UNIQUE,
+            total_students INTEGER DEFAULT 0,
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS sections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            department_code TEXT NOT NULL,
+            section_name TEXT NOT NULL,
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
         CREATE TABLE IF NOT EXISTS quiz_questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             subject TEXT NOT NULL,
@@ -226,6 +256,109 @@ def ensure_sqlite_demo_db(db_path):
         );
         """)
 
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS homework (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            subject TEXT,
+            title TEXT,
+            description TEXT,
+            due_date TEXT,
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS assignments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            subject TEXT,
+            title TEXT,
+            description TEXT,
+            due_date TEXT,
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS ai_assignments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            subject TEXT,
+            difficulty TEXT,
+            instructions TEXT,
+            created_by TEXT,
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS study_materials (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            subject TEXT,
+            type TEXT,
+            link TEXT,
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS student_doubts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id TEXT,
+            subject TEXT,
+            topic TEXT,
+            question TEXT,
+            answer TEXT,
+            status TEXT DEFAULT 'Answered',
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS subject_diagnostics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id TEXT,
+            subject TEXT,
+            weakness TEXT,
+            strength TEXT,
+            score REAL
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS active_teaching_activities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            category TEXT,
+            description TEXT,
+            created_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS risk_predictions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id TEXT UNIQUE,
+            current_pct REAL,
+            predicted_pct REAL,
+            risk_level TEXT,
+            ai_recommendation TEXT,
+            updated_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS jam_topics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category TEXT,
+            title TEXT,
+            description TEXT,
+            suggested_points TEXT,
+            vocabulary_hints TEXT,
+            target_skills TEXT
+        );
+        """)
+
         # SEED DEFAULT DATA IF EMPTY
         cur.execute("SELECT COUNT(*) FROM students")
         if cur.fetchone()[0] == 0:
@@ -243,6 +376,38 @@ def ensure_sqlite_demo_db(db_path):
         if cur.fetchone()[0] == 0:
             cur.execute("INSERT OR REPLACE INTO admins (admin_id, username, password, name) VALUES (?, ?, ?, ?)",
                         ("ADM001", "admin", "500452", "System Administrator"))
+
+        cur.execute("SELECT COUNT(*) FROM attendance")
+        if cur.fetchone()[0] == 0:
+            today_str = str(date.today())
+            cur.execute("INSERT INTO attendance (student_id, date, status, subject, hour) VALUES (?, ?, ?, ?, ?)",
+                        ("23501A1201", today_str, "Present", "DevOps", 1))
+            cur.execute("INSERT INTO attendance (student_id, date, status, subject, hour) VALUES (?, ?, ?, ?, ?)",
+                        ("23501A1202", today_str, "Absent", "DevOps", 1))
+
+        cur.execute("SELECT COUNT(*) FROM departments")
+        if cur.fetchone()[0] == 0:
+            cur.execute("INSERT OR REPLACE INTO departments (department_name, short_code, total_students) VALUES (?, ?, ?)",
+                        ("Computer Science & Engineering", "CSE", 120))
+            cur.execute("INSERT OR REPLACE INTO departments (department_name, short_code, total_students) VALUES (?, ?, ?)",
+                        ("Electronics & Communication", "ECE", 90))
+
+        cur.execute("SELECT COUNT(*) FROM sections")
+        if cur.fetchone()[0] == 0:
+            cur.execute("INSERT INTO sections (department_code, section_name) VALUES (?, ?)", ("CSE", "A"))
+            cur.execute("INSERT INTO sections (department_code, section_name) VALUES (?, ?)", ("CSE", "B"))
+
+        cur.execute("SELECT COUNT(*) FROM student_marks")
+        if cur.fetchone()[0] == 0:
+            cur.execute("INSERT INTO student_marks (student_id, subject, internal_1, internal_2, assignments_score, quiz_score, total_marks, grade) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        ("23501A1201", "DevOps", 24.5, 23.0, 9.5, 9.2, 66.2, "A+"))
+            cur.execute("INSERT INTO student_marks (student_id, subject, internal_1, internal_2, assignments_score, quiz_score, total_marks, grade) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        ("23501A1201", "Machine Learning", 22.0, 21.5, 8.5, 8.0, 60.0, "A"))
+
+        cur.execute("SELECT COUNT(*) FROM jam_topics")
+        if cur.fetchone()[0] == 0:
+            cur.execute("INSERT INTO jam_topics (category, title, description, suggested_points) VALUES (?, ?, ?, ?)",
+                        ("Technical", "The Impact of Generative AI on Modern Software Engineering", "Speak on AI coding tools, Copilot, code review automation.", "1. AI Tools\n2. Productivity\n3. Quality"))
 
         cur.execute("SELECT COUNT(*) FROM quiz_questions")
         if cur.fetchone()[0] == 0:
@@ -798,13 +963,13 @@ def faculty_dashboard():
     total_students = len(students)
 
     cur.execute("SELECT COUNT(*) as total FROM attendance WHERE subject=%s", (subject,))
-    sub_total = cur.fetchone()["total"]
+    sub_total = (cur.fetchone() or {}).get("total") or 0
 
     cur.execute("SELECT COUNT(*) as present FROM attendance WHERE subject=%s AND status='Present'", (subject,))
-    sub_present = cur.fetchone()["present"]
-    sub_absent = sub_total - sub_present
+    sub_present = (cur.fetchone() or {}).get("present") or 0
+    sub_absent = max(0, sub_total - sub_present)
 
-    avg_attendance_rate = round((sub_present / sub_total) * 100, 1) if sub_total > 0 else 68.0
+    avg_attendance_rate = round((sub_present / sub_total) * 100, 1) if sub_total > 0 else 85.0
 
     # Risk List
     cur.execute("""
@@ -823,8 +988,9 @@ def faculty_dashboard():
     at_risk_list = []
 
     for sr in student_rates:
-        tot = sr["total_cnt"]
-        pct = round((sr["present_cnt"] / tot) * 100, 1) if tot > 0 else 68.0
+        tot = sr.get("total_cnt") or 0
+        pres = sr.get("present_cnt") or 0
+        pct = round((pres / tot) * 100, 1) if tot > 0 else 85.0
 
         if pct < 65.0:
             high_risk_cnt += 1
@@ -835,14 +1001,26 @@ def faculty_dashboard():
         else:
             safe_cnt += 1
 
-    cur.execute("SELECT * FROM announcements ORDER BY id DESC LIMIT 5")
-    announcements = cur.fetchall()
+    announcements = []
+    try:
+        cur.execute("SELECT * FROM announcements ORDER BY id DESC LIMIT 5")
+        announcements = cur.fetchall()
+    except Exception:
+        pass
 
-    cur.execute("SELECT * FROM ai_assignments ORDER BY id DESC LIMIT 10")
-    assignments = cur.fetchall()
+    assignments = []
+    try:
+        cur.execute("SELECT * FROM ai_assignments ORDER BY id DESC LIMIT 10")
+        assignments = cur.fetchall()
+    except Exception:
+        pass
 
-    cur.execute("SELECT * FROM homework ORDER BY id DESC LIMIT 10")
-    homework = cur.fetchall()
+    homework = []
+    try:
+        cur.execute("SELECT * FROM homework ORDER BY id DESC LIMIT 10")
+        homework = cur.fetchall()
+    except Exception:
+        pass
 
     cur.execute("""
         SELECT subject,
@@ -859,9 +1037,9 @@ def faculty_dashboard():
     subject_comparison = {}
 
     for sr in all_subj_rows:
-        subj = sr["subject"]
-        sub_tot = sr["total_sub"]
-        sub_pres = sr["present_sub"] if sr["present_sub"] else 0
+        subj = sr.get("subject", "DevOps")
+        sub_tot = sr.get("total_sub") or 0
+        sub_pres = sr.get("present_sub") or 0
         pct = round((sub_pres / sub_tot) * 100, 1) if sub_tot > 0 else 85.0
         subject_labels.append(subj)
         subject_rates.append(pct)
@@ -876,7 +1054,7 @@ def faculty_dashboard():
 
     return render_template(
         "faculty_dashboard.html",
-        faculty_name=session.get("faculty_name", "Faculty Member"),
+        faculty_name=session.get("faculty_name", "Dr. Ramesh Varma"),
         subject=subject,
         total_students=total_students,
         sub_present=sub_present,
@@ -912,16 +1090,16 @@ def admin_dashboard():
     cur = con.cursor(dictionary=True)
 
     cur.execute("SELECT COUNT(*) as c FROM students")
-    students_cnt = cur.fetchone()["c"]
+    students_cnt = (cur.fetchone() or {}).get("c") or 0
 
     cur.execute("SELECT COUNT(*) as c FROM faculty")
-    faculty_cnt = cur.fetchone()["c"]
+    faculty_cnt = (cur.fetchone() or {}).get("c") or 0
 
     cur.execute("SELECT COUNT(*) as total, SUM(CASE WHEN status='Present' THEN 1 ELSE 0 END) as present FROM attendance")
-    att_stats = cur.fetchone()
-    total_logs = att_stats["total"] or 0
-    present_logs = att_stats["present"] or 0
-    avg_pct = round((present_logs / total_logs) * 100, 1) if total_logs > 0 else 68.0
+    att_stats = cur.fetchone() or {}
+    total_logs = att_stats.get("total") or 0
+    present_logs = att_stats.get("present") or 0
+    avg_pct = round((present_logs / total_logs) * 100, 1) if total_logs > 0 else 85.0
 
     cur.execute("""
         SELECT s.student_id, s.name, s.email, s.department, s.section,
