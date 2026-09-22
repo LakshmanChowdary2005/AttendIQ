@@ -2022,9 +2022,9 @@ Hello {{ name }}! I am your AttendIQ Socratic AI Tutor. Select your subject or c
           <h2 style="font-family: 'Outfit', sans-serif; font-size: 20px; color: #fff; margin-bottom: 4px;">JAM (Just-A-Minute) Extempore Module</h2>
           <p style="font-size: 12px; color: #9ca3af; margin-bottom: 20px;">Practice extempore communication skills with real-time timer, topic guidance, and self-assessment</p>
 
-          <div style="display:grid; grid-template-columns: 320px 1fr; gap:24px;">
+          <div id="jamStudioCard" style="display:grid; grid-template-columns: 320px 1fr; gap:24px;">
             <!-- Timer Card -->
-            <div style="background:rgba(0,0,0,0.5); border:1px solid var(--border-glow); border-radius:16px; padding:24px; text-align:center;">
+            <div id="jamTimerCard" style="background:rgba(0,0,0,0.5); border:1px solid var(--border-glow); border-radius:16px; padding:24px; text-align:center;">
               <div style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Extempore Timer</div>
               <div id="jamTimerVal" style="font-family:'Outfit', sans-serif; font-size:54px; font-weight:800; color:var(--accent-gold); margin:16px 0;">01:00</div>
               <div style="display:flex; gap:10px; justify-content:center;">
@@ -2102,7 +2102,7 @@ Hello {{ name }}! I am your AttendIQ Socratic AI Tutor. Select your subject or c
                 </div>
               </div>
 
-              <button type="button" class="submit-gold-btn" style="width:100%; padding:8px; font-size:12px; margin-top:8px;" onclick="pickJamTopic('{{ j.title }}', '{{ j.suggested_points }}')">
+              <button type="button" class="submit-gold-btn" style="width:100%; padding:8px; font-size:12px; margin-top:8px;" data-title="{{ j.title }}" data-points="{{ j.suggested_points }}" onclick="selectSpeechTopicFromBtn(this)">
                 Select for Speech Practice
               </button>
             </div>
@@ -2536,17 +2536,56 @@ Hello {{ name }}! I am your AttendIQ Socratic AI Tutor. Select your subject or c
       });
     }
 
+    function selectSpeechTopicFromBtn(btn) {
+      if (!btn) return;
+      const title = btn.getAttribute('data-title') || '';
+      const points = btn.getAttribute('data-points') || '';
+      pickJamTopic(title, points);
+    }
+
     function pickJamTopic(title, points) {
+      if (!title) return;
       const selectElem = document.getElementById('jamTopicSelect');
       if (selectElem) {
-        selectElem.value = title;
+        let found = false;
+        for (let i = 0; i < selectElem.options.length; i++) {
+          if (selectElem.options[i].value.trim() === title.trim()) {
+            selectElem.selectedIndex = i;
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          const opt = document.createElement('option');
+          opt.value = title;
+          opt.innerText = title + " [Selected]";
+          opt.selected = true;
+          selectElem.appendChild(opt);
+        }
       }
+
       const notesElem = document.getElementById('jamNotes');
-      if (notesElem && points) {
-        notesElem.value = "Target Key Talking Points:\n" + points;
+      if (notesElem) {
+        notesElem.value = points ? ("Target Key Talking Points:\n" + points) : "";
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      alert("Loaded '" + title + "' into Extempore Studio! Click Start 60s when ready.");
+
+      // Smooth scroll directly to Extempore Speech Studio
+      const studioElem = document.getElementById('jamStudioCard') || document.getElementById('jamTopicSelect');
+      if (studioElem) {
+        studioElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      // Visual feedback highlight glow on Timer card
+      const timerCard = document.getElementById('jamTimerCard');
+      if (timerCard) {
+        timerCard.style.transition = 'all 0.4s ease';
+        timerCard.style.borderColor = 'var(--accent-amber, #f59e0b)';
+        timerCard.style.boxShadow = '0 0 25px rgba(245, 158, 11, 0.4)';
+        setTimeout(() => {
+          timerCard.style.borderColor = 'var(--border-glow, rgba(255,255,255,0.1))';
+          timerCard.style.boxShadow = 'none';
+        }, 2000);
+      }
     }
 
     // Mobile Sidebar Drawer Toggle
