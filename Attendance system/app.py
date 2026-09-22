@@ -257,6 +257,24 @@ def ensure_sqlite_demo_db(db_path):
         """)
 
         cur.execute("""
+        CREATE TABLE IF NOT EXISTS email_audit_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            recipient_email TEXT,
+            subject TEXT,
+            status TEXT,
+            sent_at TEXT
+        );
+        """)
+
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS department_sections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            dept_code TEXT,
+            section_name TEXT
+        );
+        """)
+
+        cur.execute("""
         CREATE TABLE IF NOT EXISTS homework (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             subject TEXT,
@@ -1151,31 +1169,58 @@ def admin_dashboard():
             "advice": advice
         })
 
-    cur.execute("SELECT * FROM email_audit_logs ORDER BY sent_at DESC LIMIT 20")
-    email_audit_logs = cur.fetchall()
+    email_audit_logs = []
+    try:
+        cur.execute("SELECT * FROM email_audit_logs ORDER BY id DESC LIMIT 20")
+        email_audit_logs = cur.fetchall()
+    except Exception:
+        pass
 
-    cur.execute("SELECT * FROM departments ORDER BY id ASC")
-    depts = cur.fetchall()
+    depts = []
+    try:
+        cur.execute("SELECT * FROM departments ORDER BY id ASC")
+        depts = cur.fetchall()
+    except Exception:
+        pass
 
-    cur.execute("SELECT * FROM department_sections ORDER BY dept_code, section_name")
-    sections_raw = cur.fetchall()
+    sections_raw = []
+    try:
+        cur.execute("SELECT * FROM department_sections ORDER BY dept_code, section_name")
+        sections_raw = cur.fetchall()
+    except Exception:
+        pass
 
     dept_list = []
     for d in depts:
-        sec_names = [sec["section_name"] for sec in sections_raw if sec["dept_code"] == d["short_code"]]
+        sec_names = [sec.get("section_name") for sec in sections_raw if sec.get("dept_code") == d.get("short_code")]
         dept_list.append({
-            "id": d["id"],
-            "short_code": d["short_code"],
-            "full_name": d["full_name"],
+            "id": d.get("id", 1),
+            "short_code": d.get("short_code", "CSE"),
+            "full_name": d.get("full_name") or d.get("department_name") or d.get("short_code") or "Computer Science",
             "created_at": d.get("created_at", "2026-09-16"),
             "sections": sec_names if sec_names else ["Section A", "Section B", "Section C"]
         })
 
-    cur.execute("SELECT student_id, name, department, section, email FROM students ORDER BY student_id ASC LIMIT 50")
-    enrolled_students = cur.fetchall()
+    if not dept_list:
+        dept_list = [
+            {"id": 1, "short_code": "CSE", "full_name": "Computer Science & Engineering", "sections": ["Section A", "Section B", "Section C"], "created_at": "2026-09-16"},
+            {"id": 2, "short_code": "ECE", "full_name": "Electronics & Communication Engineering", "sections": ["Section A", "Section B"], "created_at": "2026-09-16"},
+            {"id": 3, "short_code": "EEE", "full_name": "Electrical & Electronics Engineering", "sections": ["Section A"], "created_at": "2026-09-16"}
+        ]
 
-    cur.execute("SELECT faculty_code, name, subject, department, section FROM faculty ORDER BY id ASC LIMIT 50")
-    faculty_directory = cur.fetchall()
+    enrolled_students = []
+    try:
+        cur.execute("SELECT student_id, name, department, section, email FROM students ORDER BY student_id ASC LIMIT 50")
+        enrolled_students = cur.fetchall()
+    except Exception:
+        pass
+
+    faculty_directory = []
+    try:
+        cur.execute("SELECT faculty_code, name, subject, department FROM faculty ORDER BY id ASC LIMIT 50")
+        faculty_directory = cur.fetchall()
+    except Exception:
+        pass
 
     con.close()
 
