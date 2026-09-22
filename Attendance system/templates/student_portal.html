@@ -719,40 +719,72 @@
     .badge-card {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 18px 14px;
+      border-radius: 18px;
+      padding: 22px 18px;
       text-align: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .badge-icon {
-      font-size: 26px;
-      margin-bottom: 8px;
+    .badge-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-glow);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 158, 11, 0.15);
     }
+
+    .badge-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .badge-icon-circle.gold { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; }
+    .badge-icon-circle.cyan { background: rgba(6, 186, 212, 0.15); border: 1px solid rgba(6, 186, 212, 0.4); color: #38bdf8; }
+    .badge-icon-circle.purple { background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc; }
+    .badge-icon-circle.emerald { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; }
 
     .badge-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 700;
-      color: #fff;
+      color: #ffffff;
       margin-bottom: 4px;
     }
 
     .badge-sub {
-      font-size: 10.5px;
+      font-size: 11px;
       color: #9ca3af;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
     .unlocked-tag {
-      display: inline-block;
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #60a5fa;
-      font-size: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 10px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
+
+    .unlocked-tag.gold { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .unlocked-tag.cyan { background: rgba(6, 186, 212, 0.18); color: #38bdf8; border: 1px solid rgba(6, 186, 212, 0.4); }
+    .unlocked-tag.purple { background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); }
+    .unlocked-tag.emerald { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
 
     /* Subject Breakdown & Chart Grid */
     .breakdown-row {
@@ -1116,16 +1148,32 @@
       </div>
 
       <div class="banner-actions" style="position:relative; display:flex; gap:10px; align-items:center; z-index:100;">
-        <!-- Native Theme Switcher Dropdown -->
-        <div style="display:flex; align-items:center; gap:6px;">
-          <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Theme:</span>
-          <select id="themeNativeSelect" onchange="setTheme(this.value)" class="hdr-btn" style="background:var(--bg-sidebar); color:var(--accent-amber); border:1px solid var(--border-glow); font-size:12px; font-weight:700; padding:7px 14px; border-radius:20px; cursor:pointer; outline:none;">
-            <option value="amber" style="background:#0c0a06; color:#f59e0b;">Amber Sunset (Default)</option>
-            <option value="cyber" style="background:#030712; color:#06b6d4;">Midnight Cyber (Cyan/Violet)</option>
-            <option value="emerald" style="background:#04120d; color:#10b981;">Emerald Matrix (Bio-Green)</option>
-            <option value="purple" style="background:#0c071e; color:#a855f7;">Royal Amethyst (Imperial Purple)</option>
-            <option value="light" style="background:#ffffff; color:#2563eb;">Clean Slate (Light Mode)</option>
-          </select>
+        <!-- Interactive Theme Switcher Button & Dropdown -->
+        <div style="position:relative;">
+          <button type="button" class="hdr-btn" id="themeSelectorBtn" onclick="toggleThemeDropdown(event)" style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:var(--accent-amber); border:1px solid var(--border-glow); background:var(--bg-sidebar); border-radius:20px; padding:7px 14px; cursor:pointer;">
+            <span id="activeThemeDot" style="width:8px; height:8px; border-radius:50%; background:#f59e0b; display:inline-block;"></span>
+            <span id="activeThemeName">Amber Sunset</span> ▾
+          </button>
+
+          <!-- Theme Dropdown Menu -->
+          <div id="themeDropdownMenu" class="theme-dropdown-panel" style="display:none; position:absolute; right:0; top:44px; width:230px; background:rgba(18,14,8,0.98); backdrop-filter:blur(24px); border:1px solid var(--border-glow); border-radius:14px; padding:10px; z-index:1000; box-shadow:0 16px 40px rgba(0,0,0,0.7);">
+            <div style="font-size:11px; font-weight:700; color:#9ca3af; padding:4px 8px; text-transform:uppercase; border-bottom:1px solid var(--border-subtle); margin-bottom:6px;">Select System Theme</div>
+            <div class="theme-opt" onclick="setTheme('amber')" style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; color:#fff; font-size:12.5px; font-weight:600; transition:background 0.2s;">
+              <span style="width:10px; height:10px; border-radius:50%; background:#f59e0b;"></span> Amber Sunset (Default)
+            </div>
+            <div class="theme-opt" onclick="setTheme('cyber')" style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; color:#fff; font-size:12.5px; font-weight:600; transition:background 0.2s;">
+              <span style="width:10px; height:10px; border-radius:50%; background:#06b6d4;"></span> Midnight Cyber (Cyan)
+            </div>
+            <div class="theme-opt" onclick="setTheme('emerald')" style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; color:#fff; font-size:12.5px; font-weight:600; transition:background 0.2s;">
+              <span style="width:10px; height:10px; border-radius:50%; background:#10b981;"></span> Emerald Matrix (Green)
+            </div>
+            <div class="theme-opt" onclick="setTheme('purple')" style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; color:#fff; font-size:12.5px; font-weight:600; transition:background 0.2s;">
+              <span style="width:10px; height:10px; border-radius:50%; background:#a855f7;"></span> Royal Amethyst (Purple)
+            </div>
+            <div class="theme-opt" onclick="setTheme('light')" style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; color:#fff; font-size:12.5px; font-weight:600; transition:background 0.2s;">
+              <span style="width:10px; height:10px; border-radius:50%; background:#2563eb;"></span> Clean Slate (Light Mode)
+            </div>
+          </div>
         </div>
 
         <!-- Interactive Notification Bell Dropdown -->
@@ -1146,8 +1194,8 @@
           </div>
         </div>
 
-        <a href="/student/notes/download/devops_u1_u2" class="hdr-btn" style="background: rgba(244,63,94,0.12); color:#fb7185; border-color:rgba(244,63,94,0.3);">
-          <span>PDF Certificate</span>
+        <a href="/export/pdf?student_id={{ roll }}" target="_blank" class="hdr-btn" style="background: rgba(244,63,94,0.12); color:#fb7185; border-color:rgba(244,63,94,0.3); text-decoration:none;">
+          <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> PDF Certificate</span>
         </a>
       </div>
     </header>
@@ -1327,28 +1375,55 @@
       <!-- Achievements & Badges -->
       <div class="badges-row">
         <div class="badge-card">
-          <div class="badge-icon" style="color:var(--accent-gold); font-size:16px; font-weight:800;">[01]</div>
-          <div class="badge-title">75% Goal Crusher</div>
-          <div class="badge-sub">Maintained &gt;= 75% attendance</div>
-          <div class="unlocked-tag">UNLOCKED</div>
+          <div class="badge-icon-circle gold">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+          <div>
+            <div class="badge-title">75% Goal Crusher</div>
+            <div class="badge-sub">Maintained ≥ 75% institutional threshold</div>
+          </div>
+          <div class="unlocked-tag gold">
+            <span>✔ Tier 1 Mastered</span>
+          </div>
         </div>
+
         <div class="badge-card">
-          <div class="badge-icon" style="color:var(--accent-cyan); font-size:16px; font-weight:800;">[02]</div>
-          <div class="badge-title">Punctuality Master</div>
-          <div class="badge-sub">Achieved &gt;= 90% attendance</div>
-          <div class="unlocked-tag">UNLOCKED</div>
+          <div class="badge-icon-circle cyan">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="badge-title">Punctuality Master</div>
+            <div class="badge-sub">Achieved ≥ 90% lecture attendance</div>
+          </div>
+          <div class="unlocked-tag cyan">
+            <span>★ Honor Roll</span>
+          </div>
         </div>
+
         <div class="badge-card">
-          <div class="badge-icon" style="color:var(--accent-amber); font-size:16px; font-weight:800;">[03]</div>
-          <div class="badge-title">Consistent Performer</div>
-          <div class="badge-sub">Projected 30-day forecast &gt;= 80%</div>
-          <div class="unlocked-tag">UNLOCKED</div>
+          <div class="badge-icon-circle purple">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div>
+            <div class="badge-title">Consistent Performer</div>
+            <div class="badge-sub">Projected 30-day AI forecast ≥ 80%</div>
+          </div>
+          <div class="unlocked-tag purple">
+            <span>⚡ High Trajectory</span>
+          </div>
         </div>
+
         <div class="badge-card">
-          <div class="badge-icon" style="color:var(--accent-emerald); font-size:16px; font-weight:800;">[04]</div>
-          <div class="badge-title">Zero Risk Guardian</div>
-          <div class="badge-sub">Classified in Safe Risk Standing</div>
-          <div class="unlocked-tag">UNLOCKED</div>
+          <div class="badge-icon-circle emerald">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div>
+            <div class="badge-title">Zero Risk Guardian</div>
+            <div class="badge-sub">Classified in Safe Academic Standing</div>
+          </div>
+          <div class="unlocked-tag emerald">
+            <span>🛡️ Verified Safe</span>
+          </div>
         </div>
       </div>
 
@@ -1555,7 +1630,7 @@ Hello {{ name }}! I am your AttendIQ Socratic AI Tutor. Select your subject or c
         <div class="sub-breakdown-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
             <h3 style="font-family: 'Outfit', sans-serif; font-size: 16px; color: #fff;">Available Quizzes & Knowledge Evaluations</h3>
-            <button class="submit-gold-btn" style="width: auto; padding: 6px 16px;" onclick="switchView('tutor')">Generate AI Quiz</button>
+            <button class="submit-gold-btn" style="width: auto; padding: 6px 16px;" onclick="generateAIQuiz()">Generate AI Quiz</button>
           </div>
 
           <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
@@ -1574,21 +1649,21 @@ Hello {{ name }}! I am your AttendIQ Socratic AI Tutor. Select your subject or c
                 <td style="padding: 12px 10px;">DevOps</td>
                 <td style="padding: 12px 10px;"><span class="badge cyan">Medium</span></td>
                 <td style="padding: 12px 10px;">AI Quiz Engine</td>
-                <td style="padding: 12px 10px;"><button class="submit-gold-btn" style="padding: 5px 12px;" onclick="alert('Starting DevOps Quiz Assessment!')">Start Quiz</button></td>
+                <td style="padding: 12px 10px;"><button class="submit-gold-btn" style="padding: 5px 12px;" onclick="startQuiz('DevOps', 'DevOps & CI/CD Master Quiz')">Start Quiz</button></td>
               </tr>
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                 <td style="padding: 12px 10px; font-weight: 700; color: #fff;">Supervised ML Algorithms Evaluation</td>
                 <td style="padding: 12px 10px;">Machine Learning</td>
                 <td style="padding: 12px 10px;"><span class="badge purple">Hard</span></td>
                 <td style="padding: 12px 10px;">AI Quiz Engine</td>
-                <td style="padding: 12px 10px;"><button class="submit-gold-btn" style="padding: 5px 12px;" onclick="alert('Starting Machine Learning Quiz Assessment!')">Start Quiz</button></td>
+                <td style="padding: 12px 10px;"><button class="submit-gold-btn" style="padding: 5px 12px;" onclick="startQuiz('Machine Learning', 'Supervised ML Algorithms Evaluation')">Start Quiz</button></td>
               </tr>
               <tr>
                 <td style="padding: 12px 10px; font-weight: 700; color: #fff;">RSA Cryptography & Network Security</td>
                 <td style="padding: 12px 10px;">Cryptography</td>
                 <td style="padding: 12px 10px;"><span class="badge cyan">Medium</span></td>
                 <td style="padding: 12px 10px;">AI Quiz Engine</td>
-                <td style="padding: 12px 10px;"><button class="submit-gold-btn" style="padding: 5px 12px;" onclick="alert('Starting Cryptography Quiz!')">Start Quiz</button></td>
+                <td style="padding: 12px 10px;"><button class="submit-gold-btn" style="padding: 5px 12px;" onclick="startQuiz('Cryptography', 'RSA Cryptography & Network Security')">Start Quiz</button></td>
               </tr>
             </tbody>
           </table>
@@ -2504,6 +2579,352 @@ Hello {{ name }}! I am your AttendIQ Socratic AI Tutor. Select your subject or c
       if (themeMenu && !e.target.closest('#themeSelectorBtn')) themeMenu.style.display = 'none';
       if (notifPanel && !e.target.closest('#notifBellBtn')) notifPanel.style.display = 'none';
     });
+
+    // ================= INTERACTIVE AI QUIZ ENGINE =================
+    let currentQuizQuestions = [];
+    let currentQuizAnswers = {};
+    let currentQuestionIdx = 0;
+    let currentQuizSubject = '';
+    let currentQuizTitle = '';
+    let quizStartTime = 0;
+
+    async function startQuiz(subject, title) {
+      currentQuizSubject = subject || 'DevOps';
+      currentQuizTitle = title || (subject + ' Assessment Quiz');
+      currentQuizQuestions = [];
+      currentQuizAnswers = {};
+      currentQuestionIdx = 0;
+      quizStartTime = Date.now();
+
+      const modal = document.getElementById('quizModal');
+      const titleElem = document.getElementById('quizModalTitle');
+      const badgeElem = document.getElementById('quizModalSubjectBadge');
+      const qContainer = document.getElementById('quizQuestionContainer');
+      const rContainer = document.getElementById('quizResultsContainer');
+
+      if (titleElem) titleElem.innerText = currentQuizTitle;
+      if (badgeElem) badgeElem.innerText = currentQuizSubject;
+      if (qContainer) qContainer.style.display = 'block';
+      if (rContainer) rContainer.style.display = 'none';
+      if (modal) modal.style.display = 'flex';
+
+      const textElem = document.getElementById('quizQuestionText');
+      const optList = document.getElementById('quizOptionsList');
+      if (textElem) textElem.innerHTML = '<div style="color: var(--accent-gold);">⚡ Loading Quiz Questions...</div>';
+      if (optList) optList.innerHTML = '';
+
+      try {
+        const res = await fetch('/api/quiz/questions?subject=' + encodeURIComponent(currentQuizSubject));
+        const data = await res.json();
+        if (data.success && data.questions && data.questions.length > 0) {
+          currentQuizQuestions = data.questions;
+          renderQuizQuestion(0);
+        } else {
+          if (textElem) textElem.innerText = 'Failed to load questions. Please try again.';
+        }
+      } catch (err) {
+        console.error('Quiz Fetch Error:', err);
+        if (textElem) textElem.innerText = 'Error loading quiz questions.';
+      }
+    }
+
+    function generateAIQuiz() {
+      const subject = prompt("Enter a subject for your custom AI Quiz (e.g. Data Structures, DevOps, Python, AI):", "Data Structures");
+      if (subject && subject.trim()) {
+        startQuiz(subject.trim(), subject.trim() + " AI Knowledge Evaluation");
+      }
+    }
+
+    function renderQuizQuestion(idx) {
+      if (idx < 0 || idx >= currentQuizQuestions.length) return;
+      currentQuestionIdx = idx;
+
+      const q = currentQuizQuestions[idx];
+      const progressChip = document.getElementById('quizModalProgressChip');
+      const progressBar = document.getElementById('quizModalProgressBar');
+      const textElem = document.getElementById('quizQuestionText');
+      const optList = document.getElementById('quizOptionsList');
+
+      const total = currentQuizQuestions.length;
+      const pct = Math.round(((idx + 1) / total) * 100);
+
+      if (progressChip) progressChip.innerText = `Question ${idx + 1} of ${total}`;
+      if (progressBar) progressBar.style.width = pct + '%';
+      if (textElem) textElem.innerText = `${idx + 1}. ${q.question}`;
+
+      if (optList) {
+        const labels = ['A', 'B', 'C', 'D'];
+        optList.innerHTML = q.options.map((optText, oIdx) => {
+          const isSelected = (currentQuizAnswers[q.id] === oIdx);
+          return `
+            <button class="quiz-option-btn ${isSelected ? 'selected' : ''}" onclick="selectQuizOption(${q.id}, ${oIdx})">
+              <span class="quiz-option-index">${labels[oIdx] || oIdx + 1}</span>
+              <span>${optText}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // Nav buttons state
+      const prevBtn = document.getElementById('quizPrevBtn');
+      const nextBtn = document.getElementById('quizNextBtn');
+      const submitBtn = document.getElementById('quizSubmitBtn');
+
+      if (prevBtn) prevBtn.style.display = idx > 0 ? 'inline-block' : 'none';
+      if (nextBtn) nextBtn.style.display = idx < total - 1 ? 'inline-block' : 'none';
+      if (submitBtn) submitBtn.style.display = idx === total - 1 ? 'inline-block' : 'none';
+    }
+
+    function selectQuizOption(qId, optionIdx) {
+      currentQuizAnswers[qId] = optionIdx;
+      renderQuizQuestion(currentQuestionIdx);
+    }
+
+    function nextQuizQuestion() {
+      if (currentQuestionIdx < currentQuizQuestions.length - 1) {
+        renderQuizQuestion(currentQuestionIdx + 1);
+      }
+    }
+
+    function prevQuizQuestion() {
+      if (currentQuestionIdx > 0) {
+        renderQuizQuestion(currentQuestionIdx - 1);
+      }
+    }
+
+    async function submitQuizAssessment() {
+      const durationSeconds = Math.round((Date.now() - quizStartTime) / 1000);
+      const qContainer = document.getElementById('quizQuestionContainer');
+      const rContainer = document.getElementById('quizResultsContainer');
+      const feedbackList = document.getElementById('quizFeedbackList');
+
+      if (feedbackList) {
+        feedbackList.innerHTML = '<div style="text-align:center; color: var(--accent-gold); padding: 20px;">Evaluating answers & generating AI feedback...</div>';
+      }
+      if (qContainer) qContainer.style.display = 'none';
+      if (rContainer) rContainer.style.display = 'block';
+
+      try {
+        const payload = {
+          subject: currentQuizSubject,
+          answers: currentQuizAnswers,
+          time_taken: durationSeconds
+        };
+
+        const res = await fetch('/api/quiz/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          renderQuizResults(data);
+        } else {
+          if (feedbackList) feedbackList.innerHTML = '<div style="color: var(--accent-rose);">Failed to evaluate quiz.</div>';
+        }
+      } catch (err) {
+        console.error('Quiz Submit Error:', err);
+        if (feedbackList) feedbackList.innerHTML = '<div style="color: var(--accent-rose);">Network error submitting quiz.</div>';
+      }
+    }
+
+    function renderQuizResults(data) {
+      const scoreBadge = document.getElementById('quizScoreBadge');
+      const scoreTitle = document.getElementById('quizScoreTitle');
+      const scoreSubtitle = document.getElementById('quizScoreSubtitle');
+      const feedbackList = document.getElementById('quizFeedbackList');
+
+      const pct = data.percentage || 0;
+      const correct = data.correct_count || 0;
+      const total = data.total_questions || data.total || 0;
+
+      if (scoreBadge) {
+        scoreBadge.innerText = pct + '%';
+        scoreBadge.style.borderColor = pct >= 70 ? 'var(--accent-emerald)' : (pct >= 50 ? 'var(--accent-amber)' : 'var(--accent-rose)');
+        scoreBadge.style.color = pct >= 70 ? '#34d399' : (pct >= 50 ? '#f59e0b' : '#f87171');
+        scoreBadge.style.background = pct >= 70 ? 'rgba(16,185,129,0.15)' : (pct >= 50 ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)');
+      }
+
+      if (scoreTitle) {
+        scoreTitle.innerText = pct >= 80 ? 'Outstanding Mastery!' : (pct >= 60 ? 'Good Effort!' : 'Keep Practicing!');
+      }
+      if (scoreSubtitle) {
+        scoreSubtitle.innerText = `You answered ${correct} out of ${total} questions correctly.`;
+      }
+
+      if (feedbackList && data.feedback) {
+        feedbackList.innerHTML = data.feedback.map((item, idx) => `
+          <div style="background: rgba(255,255,255,0.03); border-left: 3px solid ${item.is_correct ? 'var(--accent-emerald)' : 'var(--accent-rose)'}; padding: 12px 14px; border-radius: 8px; margin-bottom: 10px; font-size: 12px;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; color: #fff; margin-bottom: 4px;">
+              <span>Q${idx + 1}: ${item.question}</span>
+              <span style="color: ${item.is_correct ? '#34d399' : '#f87171'}; font-size: 11px;">${item.is_correct ? '✓ Correct' : '✗ Incorrect'}</span>
+            </div>
+            <div style="color: #cbd5e1; margin-bottom: 2px;"><b>Your Answer:</b> ${item.your_answer}</div>
+            ${!item.is_correct ? `<div style="color: #34d399; margin-bottom: 2px;"><b>Correct Answer:</b> ${item.correct_answer}</div>` : ''}
+            ${item.explanation ? `<div style="color: #9ca3af; font-size: 11px; margin-top: 4px; font-style: italic;">💡 ${item.explanation}</div>` : ''}
+          </div>
+        `).join('');
+      }
+    }
+
+    function closeQuizModal() {
+      const modal = document.getElementById('quizModal');
+      if (modal) modal.style.display = 'none';
+    }
   </script>
+
+  <!-- Interactive Quiz Assessment Modal -->
+  <div id="quizModal" class="quiz-modal-overlay" style="display: none;">
+    <div class="quiz-modal-container">
+      <!-- Quiz Header -->
+      <div class="quiz-modal-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="quizModalSubjectBadge" class="badge cyan">DevOps</span>
+            <span id="quizModalProgressChip" style="font-size: 11px; color: var(--accent-gold); font-weight: 700;">Question 1 of 5</span>
+          </div>
+          <h3 id="quizModalTitle" style="font-family: 'Outfit', sans-serif; font-size: 18px; color: #fff; margin-top: 4px;">DevOps & CI/CD Master Quiz</h3>
+        </div>
+        <button class="quiz-modal-close" onclick="closeQuizModal()">&times;</button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin: 12px 0 20px 0;">
+        <div id="quizModalProgressBar" style="width: 20%; height: 100%; background: linear-gradient(90deg, #f59e0b, #10b981); transition: width 0.3s ease;"></div>
+      </div>
+
+      <!-- Quiz Active View: Question & Options -->
+      <div id="quizQuestionContainer">
+        <div id="quizQuestionText" style="font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 18px; line-height: 1.5;">
+          Loading questions...
+        </div>
+
+        <div id="quizOptionsList" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
+          <!-- Option Items dynamically rendered here -->
+        </div>
+
+        <!-- Controls -->
+        <div style="display: flex; justify-content: space-between; align-items: center; pt: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+          <button id="quizPrevBtn" class="submit-gold-btn" style="background: rgba(255,255,255,0.08); color: #ccc; border: 1px solid rgba(255,255,255,0.1); display: none; width: auto; padding: 8px 16px;" onclick="prevQuizQuestion()">Previous</button>
+          <div></div>
+          <button id="quizNextBtn" class="submit-gold-btn" style="width: auto; padding: 8px 20px;" onclick="nextQuizQuestion()">Next Question &rarr;</button>
+          <button id="quizSubmitBtn" class="submit-gold-btn" style="width: auto; padding: 8px 22px; background: linear-gradient(135deg, #10b981, #059669); display: none;" onclick="submitQuizAssessment()">Submit Quiz &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Quiz Results View (Initially Hidden) -->
+      <div id="quizResultsContainer" style="display: none;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div id="quizScoreBadge" style="display: inline-flex; align-items: center; justify-content: center; width: 85px; height: 85px; border-radius: 50%; background: rgba(16,185,129,0.15); border: 3px solid var(--accent-emerald); font-size: 24px; font-weight: 800; color: #34d399; margin: 0 auto 10px auto;">
+            80%
+          </div>
+          <h4 id="quizScoreTitle" style="font-family: 'Outfit', sans-serif; font-size: 20px; color: #fff; margin-bottom: 4px;">Assessment Completed!</h4>
+          <p id="quizScoreSubtitle" style="font-size: 13px; color: #9ca3af;">You answered 4 out of 5 questions correctly.</p>
+        </div>
+
+        <!-- Question Breakdown Accordion / List -->
+        <div style="max-height: 280px; overflow-y: auto; padding-right: 6px; margin-bottom: 20px;" id="quizFeedbackList">
+          <!-- Rendered feedback per question -->
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button class="submit-gold-btn" style="width: auto; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px 16px;" onclick="startQuiz(currentQuizSubject, currentQuizTitle)">Retake Quiz</button>
+          <button class="submit-gold-btn" style="width: auto; padding: 8px 20px;" onclick="closeQuizModal()">Done</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <style>
+    .quiz-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .quiz-modal-container {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 650px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+      animation: quizModalFade 0.25s ease-out;
+    }
+    @keyframes quizModalFade {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .quiz-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .quiz-modal-close {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 4px;
+      transition: color 0.2s;
+    }
+    .quiz-modal-close:hover {
+      color: #fff;
+    }
+    .quiz-option-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #d1d5db;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+    }
+    .quiz-option-btn:hover {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: #fff;
+    }
+    .quiz-option-btn.selected {
+      background: rgba(245, 158, 11, 0.18);
+      border-color: var(--accent-gold, #f59e0b);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+    .quiz-option-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .quiz-option-btn.selected .quiz-option-index {
+      background: #f59e0b;
+      color: #000;
+    }
+  </style>
 </body>
 </html>

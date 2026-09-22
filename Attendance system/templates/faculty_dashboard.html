@@ -989,8 +989,8 @@
 
           <div class="student-grid" id="studentGrid">
             {% for s in students %}
-              <label class="student-card" id="scard_{{ s.id }}" onclick="toggleStudentCard({{ s.id }})">
-                <input type="checkbox" name="absent" value="{{ s.id }}" id="schk_{{ s.id }}">
+              <label class="student-card" id="scard_{{ s.id }}">
+                <input type="checkbox" name="absent" value="{{ s.roll }}" id="schk_{{ s.id }}" onchange="toggleStudentCard({{ s.id }})">
                 <div class="status-indicator" id="sind_{{ s.id }}"></div>
                 <div style="font-family: monospace; font-size: 12px; font-weight: 700; color: var(--accent-cyan);">{{ s.roll }}</div>
                 <div style="font-size: 12px; font-weight: 600; color: #fff; margin-top: 2px;">{{ s.name }}</div>
@@ -1315,15 +1315,17 @@
     function selectAllCards(selectState) {
       document.querySelectorAll('#studentGrid input[type="checkbox"]').forEach(chk => {
         chk.checked = selectState;
-        const id = chk.value;
+        const id = chk.id.replace('schk_', '');
         const card = document.getElementById('scard_' + id);
         const ind = document.getElementById('sind_' + id);
-        if (selectState) {
-          card.classList.add('absent');
-          ind.innerText = 'ABSENT';
-        } else {
-          card.classList.remove('absent');
-          ind.innerText = '';
+        if (card && ind) {
+          if (selectState) {
+            card.classList.add('absent');
+            ind.innerText = 'ABSENT';
+          } else {
+            card.classList.remove('absent');
+            ind.innerText = '';
+          }
         }
       });
     }
