@@ -18,7 +18,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'), static_folder=os.path.join(BASE_DIR, 'static'))
 app.secret_key = "secretkey123_smart_attendance_system"
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -33,10 +34,11 @@ def add_header(r):
 # ================= DB CONNECTION =================
 def get_db():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="lakshman8222",
-        database="attendance_db"
+        host=os.environ.get("DB_HOST", "localhost"),
+        user=os.environ.get("DB_USER", "root"),
+        password=os.environ.get("DB_PASSWORD", "lakshman8222"),
+        database=os.environ.get("DB_NAME", "attendance_db"),
+        port=int(os.environ.get("DB_PORT", "3306"))
     )
 
 # ================= NOTIFICATION HELPER =================
